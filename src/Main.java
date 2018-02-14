@@ -1,6 +1,8 @@
 public class Main {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        Library lib = new Library("data/books.txt","data/members.txt",
+                "data/bookloans.txt");
+        Book book1 = new Book
     }
 }
