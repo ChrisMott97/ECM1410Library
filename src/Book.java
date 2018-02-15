@@ -14,4 +14,8 @@ public class Book {
         this.qty = qty;
         this.available = qty;
     }
+
+    public String getName() {
+        return name;
+    }
 }

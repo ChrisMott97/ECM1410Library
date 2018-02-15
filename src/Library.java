@@ -1,36 +1,45 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
-import java.lang.reflect.Array;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Library {
 
-    ArrayList<Book> books = new ArrayList<Book>();
-    ArrayList<Member>  members = new ArrayList<Member>();
-    ArrayList<BookLoan> bookloans = new ArrayList<BookLoan>();
+    List<Book> books = new ArrayList<>();
+    List<Member>  members = new ArrayList<>();
+    List<BookLoan> bookloans = new ArrayList<>();
 
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
+        BufferedReader br = null;
+        String line;
+        try {
+            br = new BufferedReader(new FileReader(booksFileName));
 
-        //read file into stream, try-with-resources
-        try (Stream<String> stream = Files.lines(Paths.get(booksFileName))) {
-            stream.forEach(record -> books.add(new Book()));
-        } catch (IOException e) {
+            while((line = br.readLine()) != null){
+                String[] book = line.split(",");
+                books.add(new Book(
+                        Integer.parseInt(book[0]),
+                        book[1],
+                        book[2],
+                        Integer.parseInt(book[3]),
+                        Integer.parseInt(book[4])));
+            }
+        }catch (IOException e){
             e.printStackTrace();
+        }finally {
+            if (br != null){
+                try{
+                    br.close();
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
         }
-        try (Stream<String> stream = Files.lines(Paths.get(membersFileName))) {
-            stream.forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        try (Stream<String> stream = Files.lines(Paths.get(bookLoansFileName))) {
-            stream.forEach(System.out::println);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    }
+    public List<Book> showAllBooks(){
+        return books;
     }
 }
