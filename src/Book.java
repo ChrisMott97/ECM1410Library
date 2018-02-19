@@ -33,29 +33,28 @@ public class Book {
         BufferedReader br = null;
         String line;
         List<Book> books = new ArrayList<>();
+
         try {
             br = new BufferedReader(new FileReader(file));
 
             while((line = br.readLine()) != null){
                 String[] book = line.split(",");
+
                 books.add(new Book(
                         Integer.parseInt(book[0]),
                         book[1],
                         book[2],
                         Integer.parseInt(book[3]),
-                        Integer.parseInt(book[4])));
+                        Integer.parseInt(book[4]))
+                );
             }
+
+            br.close();
+            
         }catch (IOException e){
             e.printStackTrace();
-        }finally {
-            if (br != null){
-                try{
-                    br.close();
-                }catch (IOException e){
-                    e.printStackTrace();
-                }
-            }
         }
+
         return books;
     }
 
