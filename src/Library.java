@@ -9,10 +9,17 @@ public class Library {
 
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
         books = Book.read(booksFileName);
-//        members = Member.read(membersFileName);
-//        bookLoans = bookLoan.read(bookLoansFileName);
+        members = Member.read(membersFileName);
+        bookLoans = BookLoan.read(bookLoansFileName);
     }
+
     public List<Book> showAllBooks(){
         return books;
+    }
+    public List<Member> showAllMembers(){
+        return members;
+    }
+    public List<BookLoan> showAllBookLoans(){
+        return bookLoans;
     }
 }

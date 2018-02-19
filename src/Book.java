@@ -30,12 +30,13 @@ public class Book {
     }
 
     public static List<Book> read(String file){
-        BufferedReader br = null;
+        BufferedReader br;
         String line;
         List<Book> books = new ArrayList<>();
 
         try {
-            br = new BufferedReader(new FileReader(file));
+            FileReader fr = new FileReader(file);
+            br = new BufferedReader(fr);
 
             while((line = br.readLine()) != null){
                 String[] book = line.split(",");
