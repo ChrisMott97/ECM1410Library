@@ -7,18 +7,17 @@ import java.util.List;
 public class Book {
     private int id;
     private String title;
-    private String author;
+    private String[] author;
     private int year;
     private int numberCopies;
     private int available;
 
-    public Book(int id, String title, String author, int year, int numberCopies){
+    public Book(int id, String title, String[] author, int year, int numberCopies){
         this.id = id;
         this.title = title;
         this.author = author;
         this.year = year;
         this.numberCopies = numberCopies;
-        this.available = numberCopies;
     }
 
     public int getId() {
@@ -27,7 +26,7 @@ public class Book {
     public String getTitle() {
         return title;
     }
-    public String getAuthor() {
+    public String[] getAuthor() {
         return author;
     }
     public int getYear() {
@@ -36,11 +35,9 @@ public class Book {
     public int getNumberCopies() {
         return numberCopies;
     }
-
-    public void setAvailable(int available) {
-        this.available = available;
+    public int getAvailable() {
+        return 0;
     }
-
     public static List<Book> read(String file){
         BufferedReader br;
         String line;
@@ -53,17 +50,18 @@ public class Book {
             while((line = br.readLine()) != null){
                 String[] book = line.split(",");
 
+
                 books.add(new Book(
                         Integer.parseInt(book[0]),
                         book[1],
-                        book[2],
+                        book[2].split(":"),
                         Integer.parseInt(book[3]),
                         Integer.parseInt(book[4]))
                 );
             }
 
             br.close();
-            
+
         }catch (IOException e){
             e.printStackTrace();
         }

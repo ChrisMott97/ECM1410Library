@@ -8,5 +8,7 @@ public class Main {
         lib.showAllBooks();
         lib.showAllMembers();
         lib.showAllBookLoans();
+
+        lib.searchBook("java");
     }
 }

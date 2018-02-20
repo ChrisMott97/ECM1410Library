@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Library {
@@ -14,12 +15,12 @@ public class Library {
     }
 
     public void showAllBooks(){
-        System.out.printf("%-7s %-30s %-30s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
+        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
         for (Book book : books) {
-            System.out.printf("%-7d %-30s %-30s %-5d %-3d\n",
+            System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
                     book.getId(),
                     book.getTitle(),
-                    book.getAuthor(),
+                    Arrays.toString(book.getAuthor()),
                     book.getYear(),
                     book.getNumberCopies()
             );
@@ -49,5 +50,29 @@ public class Library {
             );
         }
         System.out.println();
+    }
+
+    public void searchBook(String query){
+        query = query.toLowerCase();
+        List<Book> search = new ArrayList<>();
+        for (Book book: books) {
+            if (book.getTitle().toLowerCase().contains(query)) {
+                search.add(book);
+            }
+        }
+        if(!search.isEmpty()){
+            System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
+            for (Book book : search) {
+                System.out.printf("%-7s %-30s %-35s %-5s %-3s\n",
+                        book.getId(),
+                        book.getTitle(),
+                        Arrays.toString(book.getAuthor()),
+                        book.getYear(),
+                        book.getNumberCopies()
+                );
+            }
+        }else{
+            System.out.println("No books found.");
+        }
     }
 }

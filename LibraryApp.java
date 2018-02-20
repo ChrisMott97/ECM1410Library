@@ -27,7 +27,7 @@ public class LibraryApp
        lib.showAllBooks();    // show all the book records
        lib.showAllMembers();  // show all the member records
        lib.showAllBookLoans();// show all the book loan records
-       
+
        // STEP2: test the library system
        System.out.println("\n* Start testing ...\n");
        boolean isFixInput = false;
