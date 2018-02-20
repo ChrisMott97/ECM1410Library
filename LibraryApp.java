@@ -3,7 +3,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.time.LocalDate;
 /**
- * LibraryApp is used to test the libaray management system.
+ * LibraryApp is used to test the library management system.
  * All its functions are implemented in Library class
  *
  * @author Hongping Cai
@@ -32,7 +32,7 @@ public class LibraryApp
        System.out.println("\n* Start testing ...\n");
        boolean isFixInput = false;
        if (isFixInput){
-           // OPTIONT 1: Test the library system with fixed input.
+           // OPTION 1: Test the library system with fixed input.
            // When you start programming, you may pick this test mode.
            testWithFixInput(lib);
        }
@@ -148,9 +148,9 @@ public class LibraryApp
     }
     /**
      * Display all functions of the library management system.
-     * Get the user's input (one charactor from a list of charactors)
+     * Get the user's input (one character from a list of characters)
      *
-     * @return  the user's input charactor  
+     * @return  the user's input character  
      */
     private static char getUserInput(){ 
         System.out.println("**************************************************");
@@ -165,12 +165,11 @@ public class LibraryApp
         System.out.println("*Enter c: [c]hange the stock quantity for an existing book.");
         System.out.println("*Enter q: [q]uit.");
         Scanner in = new Scanner(System.in);
-        char inchar = in.nextLine().charAt(0);
-        in.close();
+        char inchar = in.next().charAt(0);
         return inchar;
     }
     /**
-     * After finishing one service, ask the user if any other requiements
+     * After finishing one service, ask the user if any other requirements
      *
      * @return yes (true) or no (false)
      */
@@ -180,7 +179,7 @@ public class LibraryApp
        Scanner in = new Scanner(System.in);
        do {
            System.out.println("\n* Any other requirements?[y/n]");
-           char inCh = in.nextLine().charAt(0);
+           char inCh = in.next().charAt(0);
            isYesOrNoInput = true;
            if ((inCh == 'y') || (inCh == 'Y')){
                moreRequirement = true;
@@ -193,7 +192,6 @@ public class LibraryApp
             }
            
         } while (!isYesOrNoInput);
-        in.close();
         return moreRequirement;
     }
 }
