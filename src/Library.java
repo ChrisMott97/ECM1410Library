@@ -3,9 +3,9 @@ import java.util.List;
 
 public class Library {
 
-    List<Book> books = new ArrayList<>();
-    List<Member>  members = new ArrayList<>();
-    List<BookLoan> bookLoans = new ArrayList<>();
+    List<Book> books;
+    List<Member>  members;
+    List<BookLoan> bookLoans;
 
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
         books = Book.read(booksFileName);
@@ -13,13 +13,41 @@ public class Library {
         bookLoans = BookLoan.read(bookLoansFileName);
     }
 
-    public List<Book> showAllBooks(){
-        return books;
+    public void showAllBooks(){
+        System.out.printf("%-7s %-30s %-30s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
+        for (Book book : books) {
+            System.out.printf("%-7d %-30s %-30s %-5d %-3d\n",
+                    book.getId(),
+                    book.getTitle(),
+                    book.getAuthor(),
+                    book.getYear(),
+                    book.getNumberCopies()
+            );
+        }
+        System.out.println();
     }
-    public List<Member> showAllMembers(){
-        return members;
+    public void showAllMembers(){
+        System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
+        for (Member member : members) {
+            System.out.printf("%-7d %-12s %-12s %-15s\n",
+                    member.getId(),
+                    member.getFName(),
+                    member.getLName(),
+                    member.getDateJoin().toString()
+            );
+        }
+        System.out.println();
     }
-    public List<BookLoan> showAllBookLoans(){
-        return bookLoans;
+    public void showAllBookLoans(){
+        System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+        for (BookLoan bookLoan : bookLoans) {
+            System.out.printf("%-8d %-10d %-11d %-15s\n",
+                    bookLoan.getId(),
+                    bookLoan.getBookId(),
+                    bookLoan.getMemberId(),
+                    bookLoan.getBorrowDate().toString()
+            );
+        }
+        System.out.println();
     }
 }

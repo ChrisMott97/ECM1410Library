@@ -59,4 +59,16 @@ public class BookLoan {
     public Date getBorrowDate() {
         return borrowDate;
     }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getBookId() {
+        return bookId;
+    }
+
+    public int getMemberId() {
+        return memberId;
+    }
 }

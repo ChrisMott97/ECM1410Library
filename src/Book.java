@@ -6,23 +6,35 @@ import java.util.List;
 
 public class Book {
     private int id;
-    private String name;
+    private String title;
     private String author;
     private int year;
-    private int qty;
+    private int numberCopies;
     private int available;
 
-    public Book(int id, String name, String author, int year, int qty){
+    public Book(int id, String title, String author, int year, int numberCopies){
         this.id = id;
-        this.name = name;
+        this.title = title;
         this.author = author;
         this.year = year;
-        this.qty = qty;
-        this.available = qty;
+        this.numberCopies = numberCopies;
+        this.available = numberCopies;
     }
 
-    public String getName() {
-        return name;
+    public int getId() {
+        return id;
+    }
+    public String getTitle() {
+        return title;
+    }
+    public String getAuthor() {
+        return author;
+    }
+    public int getYear() {
+        return year;
+    }
+    public int getNumberCopies() {
+        return numberCopies;
     }
 
     public void setAvailable(int available) {
