@@ -52,14 +52,6 @@ public class Library {
         System.out.println();
     }
 
-    public Book getBookById(int id){
-        for (Book book: books) {
-            if (book.getId() == id) {
-                return book;
-            }
-        }
-        return null;
-    }
     public void searchBook(String query){
         List<Book> results = Book.getBook(query, books);
         if(!results.isEmpty()){
@@ -80,51 +72,46 @@ public class Library {
     }
 
     public void borrowBook(String book, String fName, String lName){
-        List<Book> results = Book.getBook(book, books);
+        List<Book> bookResult = Book.getBook(book, books);
+        Member memberResult = Member.getMember(fName, lName, members);
+
+//        if(bookResult.size() == 1 && memberResult != null){
+//
+//        }
     }
 
     public void searchMember(String fName, String lName){
-        fName = fName.toLowerCase();
-        lName = lName.toLowerCase();
-        List<Member> search = new ArrayList<>();
-        for (Member member: members) {
-            if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
-                search.add(member);
-            }
-        }
-
-        if(!search.isEmpty()){
+        Member member = Member.getMember(fName, lName, members);
+        if(member != null){
             System.out.printf("%-7s %-30s %-35s %-8s\n","ID", "First Name", "Last Name", "Date Joined");
-            for (Member member : search) {
-                System.out.printf("%-7s %-30s %-35s %-8s\n",
-                        member.getId(),
-                        member.getFName(),
-                        member.getLName(),
-                        member.getDateJoin()
-                );
-                List<Book> books = new ArrayList<>();
-                for (BookLoan bookLoan : bookLoans){
-                    if (bookLoan.getMemberId() == member.getId()){
-                       books.add(getBookById(bookLoan.getBookId()));
-                    }
+            System.out.printf("%-7s %-30s %-35s %-8s\n",
+                    member.getId(),
+                    member.getFName(),
+                    member.getLName(),
+                    member.getDateJoin()
+            );
+            List<Book> bookResults = new ArrayList<>();
+            for (BookLoan bookLoan : bookLoans){
+                if (bookLoan.getMemberId() == member.getId()){
+                   bookResults.add(Book.getBookById(bookLoan.getBookId(), books));
                 }
-                if(!books.isEmpty()) {
-                    System.out.printf("%7s\n","|");
-                    System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies");
-                    for (Book book : books){
-                        System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n",
-                                "|",
-                                book.getId(),
-                                book.getTitle(),
-                                Arrays.toString(book.getAuthor()),
-                                book.getYear(),
-                                book.getNumberCopies()
-                        );
-                    }
+            }
+            if(!bookResults.isEmpty()) {
+                System.out.printf("%7s\n","|");
+                System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies");
+                for (Book book : bookResults){
+                    System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n",
+                            "|",
+                            book.getId(),
+                            book.getTitle(),
+                            Arrays.toString(book.getAuthor()),
+                            book.getYear(),
+                            book.getNumberCopies()
+                    );
                 }
             }
         }else{
-            System.out.println("No members found");
+            System.out.println("No member found");
         }
     }
 }

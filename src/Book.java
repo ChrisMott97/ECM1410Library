@@ -79,5 +79,13 @@ public class Book {
         }
         return search;
     }
+    public static Book getBookById(int id, List<Book> books){
+        for (Book book: books) {
+            if (book.getId() == id) {
+                return book;
+            }
+        }
+        return null;
+    }
 
 }

@@ -69,4 +69,14 @@ public class Member {
     public Date getDateJoin(){
         return dateJoin;
     }
+    public static Member getMember(String fName, String lName, List<Member> members){
+        fName = fName.toLowerCase();
+        lName = lName.toLowerCase();
+        for (Member member: members) {
+            if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
+                return member;
+            }
+        }
+        return null;
+    }
 }
