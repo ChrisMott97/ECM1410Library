@@ -121,6 +121,7 @@ public class Book {
         }
         if(getBookById(getId(), books) == null){
             if(getBook(this.getTitle(), books).isEmpty()){
+                //TODO Only add if member hasn't borrowed 5 or more books
                 books.add(this);
                 return true;
             }else{

@@ -80,7 +80,7 @@ public class Library {
         if(bookResult.size() == 1 && memberResult != null){
             BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
             if(bookLoan.addTo(bookLoans)){
-                //BookLoan.write('data/bookloans.txt', bookLoans)
+                BookLoan.write("data/bookloans.txt", bookLoans);
 
                 System.out.println("Book successfully borrowed: ");
                 System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
@@ -168,6 +168,14 @@ public class Library {
                 book.getNumberCopies()
             );
             System.out.println();
+        }
+    }
+
+    public void addNewMember(String fName, String lName, Date date){
+        Date dateNow = new Date();
+        Member member = new Member(fName, lName, dateNow);
+        if(member.addTo(members)){
+            return;
         }
     }
 }

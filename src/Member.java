@@ -20,6 +20,13 @@ public class Member {
         this.dateJoin = dateJoin;
     }
 
+    public Member(String fName, String lName, Date dateJoin){
+        this.id = 0;
+        this.fName = fName;
+        this.lName = lName;
+        this.dateJoin = dateJoin;
+    }
+
     public static List<Member> read(String file){
         BufferedReader br;
         String line;
@@ -60,6 +67,11 @@ public class Member {
     public int getId(){
         return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getFName(){
         return fName;
     }
@@ -78,5 +90,32 @@ public class Member {
             }
         }
         return null;
+    }
+
+    public static Member getMemberById(int id, List<Member> members){
+        for (Member member : members) {
+            if(member.getId() == id){
+                return member;
+            }
+        }
+        return null;
+    }
+
+    public boolean addTo(List<Member> members){
+        if(getId() == -1) {
+            int newId = members.get(members.size() - 1).getId() + 1;
+            setId(newId);
+        }
+        if(getMemberById(getId(), members) == null){
+            if(getMember(getFName(), getLName(), members) == null){
+                members.add(this);
+                return true;
+            }else{
+                System.out.println("Member already exists with this name!");
+            }
+        }else{
+            System.out.println("Member already exists with this ID");
+        }
+        return false;
     }
 }
