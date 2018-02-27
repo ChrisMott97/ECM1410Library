@@ -10,5 +10,6 @@ public class Main {
         lib.showAllBookLoans();
 
         lib.searchBook("java");
+        lib.searchMember("Sarah","Hoopern");
     }
 }
