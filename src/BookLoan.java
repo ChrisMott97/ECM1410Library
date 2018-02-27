@@ -71,4 +71,13 @@ public class BookLoan {
     public int getMemberId() {
         return memberId;
     }
+
+    public static BookLoan getBookLoanById(int id, List<BookLoan> bookLoans) {
+        for (BookLoan bookLoan: bookLoans) {
+            if (bookLoan.getId() == id) {
+                return bookLoan;
+            }
+        }
+        return null;
+    }
 }
