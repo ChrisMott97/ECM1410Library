@@ -13,7 +13,7 @@ public class Library {
     }
 
     public void write(){
-        BookLoan.write("data/bookloans.txt", bookLoans);
+        Member.write("data/members.txt", members);
     }
 
     public void showAllBooks(){
@@ -147,6 +147,7 @@ public class Library {
         if (bookLoan != null) {
             if (returnDate.after(today)) {
                 System.out.println("YOU PAY!!");
+                //todo localdate difference etc
             } else {
                 System.out.println("YOU NO PAY!!");
             }
