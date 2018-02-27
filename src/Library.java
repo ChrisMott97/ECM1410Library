@@ -1,7 +1,4 @@
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 public class Library {
 
@@ -115,6 +112,28 @@ public class Library {
             }
         }else{
             System.out.println("No member found");
+        }
+    }
+
+    public void returnBook(int id) {
+        BookLoan bookLoan = BookLoan.getBookLoanById(id, bookLoans);
+
+        Calendar cal = Calendar.getInstance();
+
+        Date today = new Date();
+        Date borrowDate = bookLoan.getBorrowDate();
+        Date returnDate;
+
+        cal.setTime(borrowDate);
+        cal.add(Calendar.DATE, 30);
+        returnDate = cal.getTime();
+
+        if (bookLoan != null) {
+            if (returnDate.after(today)) {
+                System.out.println("YOU PAY!!");
+            } else {
+                System.out.println("YOU NO PAY!!");
+            }
         }
     }
 
