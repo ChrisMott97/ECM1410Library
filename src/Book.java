@@ -1,6 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -27,27 +25,6 @@ public class Book {
         this.author = author;
         this.year = year;
         this.numberCopies = numberCopies;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-    public String[] getAuthor() {
-        return author;
-    }
-    public int getYear() {
-        return year;
-    }
-    public int getNumberCopies() {
-        return numberCopies;
     }
     public static List<Book> read(String file){
         BufferedReader br;
@@ -79,6 +56,45 @@ public class Book {
 
         return books;
     }
+    public static void write(String file, List<Book> books){
+        try {
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            for (Book book : books) {
+                String authors = Arrays.toString(book.getAuthor());
+                writer.printf("%d,%s,%s,%d,%d\n",
+                        book.getId(),
+                        book.getTitle(),
+                        authors.substring(1, authors.length()-1).replaceAll(", ", ":"),
+                        book.getYear(),
+                        book.getNumberCopies()
+                );
+            }
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+    public String[] getAuthor() {
+        return author;
+    }
+    public int getYear() {
+        return year;
+    }
+    public int getNumberCopies() {
+        return numberCopies;
+    }
     public static List<Book> getBook(String query, List<Book> books){
         query = query.toLowerCase();
         List<Book> search = new ArrayList<>();
@@ -97,7 +113,8 @@ public class Book {
         }
         return null;
     }
-    public void create(List<Book> books){
+
+    public void addTo(List<Book> books){
         if(getId() == -1) {
             int newId = books.get(books.size() - 1).getId() + 1;
             setId(newId);
@@ -111,6 +128,7 @@ public class Book {
             }
         }else{
             System.out.println("Book ID already exists!");
+            //TODO handle better
         }
     }
 }

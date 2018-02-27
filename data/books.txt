@@ -5,3 +5,4 @@
 100005,Objects First with Java,David Barnes:Michael Kolling,2001,4
 100006,Physics & Philosophy,Werner Heisenberg,1978,4
 100007,Making Software,Andy Oram,1982,5
+100008,Da Buuk,Chris Mott,2018,1

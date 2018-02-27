@@ -12,6 +12,10 @@ public class Library {
         bookLoans = BookLoan.read(bookLoansFileName);
     }
 
+    public void write(){
+        Book.write("data/books.txt", books);
+    }
+
     public void showAllBooks(){
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
         for (Book book : books) {
@@ -75,7 +79,7 @@ public class Library {
 
         if(bookResult.size() == 1 && memberResult != null){
             BookLoan newBookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
-            newBookLoan.create(bookLoans);
+            newBookLoan.addTo(bookLoans);
         }
     }
 
@@ -139,7 +143,7 @@ public class Library {
 
     public void addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
-        book.create(books);
+        book.addTo(books);
 
         System.out.println("Book successfully added to library: ");
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");

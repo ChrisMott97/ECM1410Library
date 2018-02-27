@@ -125,7 +125,7 @@ public class BookLoan {
         return null;
     }
 
-    public void create(List<BookLoan> bookLoans){
+    public void addTo(List<BookLoan> bookLoans){
         return;
     }
 }
