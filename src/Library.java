@@ -174,9 +174,20 @@ public class Library {
 
     public void addNewMember(String fName, String lName, Date date){
         Date dateNow = new Date();
+        //TODO adjust to LocalDate
         Member member = new Member(fName, lName, dateNow);
         if(member.addTo(members)){
-            return;
+            Member.write("data/members.txt", members);
+
+            System.out.println("Member successfully added: ");
+            System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
+            System.out.printf("%-7d %-12s %-12s %-15s\n",
+                    member.getId(),
+                    member.getFName(),
+                    member.getLName(),
+                    member.getDateJoin().toString()
+            );
+            System.out.println();
         }
     }
 }

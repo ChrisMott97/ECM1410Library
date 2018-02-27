@@ -22,7 +22,7 @@ public class Member {
     }
 
     public Member(String fName, String lName, Date dateJoin){
-        this.id = 0;
+        this.id = -1;
         this.fName = fName;
         this.lName = lName;
         this.dateJoin = dateJoin;

@@ -1,3 +1,4 @@
+import java.util.Date;
 import java.util.List;
 
 public class Main {
@@ -15,7 +16,10 @@ public class Main {
         lib.addNewBook("Da Buuk", new String[]{"Chris Mott"}, 2018, 1);
 
         lib.showAllBooks();
-        lib.write();
         lib.borrowBook("Da Buuk", "Sarah", "Hoopern");
+
+        lib.addNewMember("Ors", "Barkanyi", new Date());
+
+        //TODO Add all library functions with no arguments w/ input
     }
 }
