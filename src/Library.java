@@ -13,7 +13,7 @@ public class Library {
     }
 
     public void write(){
-        BookLoan.write("data/bookloans.txt", bookLoans);
+        Member.write("data/members.txt", members);
     }
 
     public void showAllBooks(){
@@ -80,7 +80,7 @@ public class Library {
         if(bookResult.size() == 1 && memberResult != null){
             BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
             if(bookLoan.addTo(bookLoans)){
-                //BookLoan.write('data/bookloans.txt', bookLoans)
+                BookLoan.write("data/bookloans.txt", bookLoans);
 
                 System.out.println("Book successfully borrowed: ");
                 System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
@@ -147,6 +147,7 @@ public class Library {
         if (bookLoan != null) {
             if (returnDate.after(today)) {
                 System.out.println("YOU PAY!!");
+                //todo localdate difference etc
             } else {
                 System.out.println("YOU NO PAY!!");
             }

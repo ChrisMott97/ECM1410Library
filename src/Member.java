@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -54,6 +55,24 @@ public class Member {
         }
 
         return members;
+    }
+
+    public static void write(String file, List<Member> members){
+        try {
+            PrintWriter writer = new PrintWriter(file, "UTF-8");
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            for (Member member : members) {
+                writer.printf("%d,%s,%s,%s\n",
+                        member.getId(),
+                        member.getFName(),
+                        member.getLName(),
+                        dateFormat.format(member.getDateJoin())
+                );
+            }
+            writer.close();
+        }catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     //getters
