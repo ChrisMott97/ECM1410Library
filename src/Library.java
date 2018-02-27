@@ -12,6 +12,10 @@ public class Library {
         bookLoans = BookLoan.read(bookLoansFileName);
     }
 
+    public void write(){
+        BookLoan.write("data/bookloans.txt", bookLoans);
+    }
+
     public void showAllBooks(){
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
         for (Book book : books) {
