@@ -53,16 +53,10 @@ public class Library {
     }
 
     public void searchBook(String query){
-        query = query.toLowerCase();
-        List<Book> search = new ArrayList<>();
-        for (Book book: books) {
-            if (book.getTitle().toLowerCase().contains(query)) {
-                search.add(book);
-            }
-        }
-        if(!search.isEmpty()){
+        List<Book> results = Book.getBook(query, books);
+        if(!results.isEmpty()){
             System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
-            for (Book book : search) {
+            for (Book book : results) {
                 System.out.printf("%-7s %-30s %-35s %-5s %-3s\n",
                         book.getId(),
                         book.getTitle(),
@@ -74,5 +68,9 @@ public class Library {
         }else{
             System.out.println("No books found.");
         }
+    }
+
+    public void borrowBook(String book, String fName, String lName){
+        List<Book> results = Book.getBook(book, books);
     }
 }

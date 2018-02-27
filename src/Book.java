@@ -2,6 +2,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class Book {
@@ -67,6 +68,16 @@ public class Book {
         }
 
         return books;
+    }
+    public static List<Book> getBook(String query, List<Book> books){
+        query = query.toLowerCase();
+        List<Book> search = new ArrayList<>();
+        for (Book book: books) {
+            if (book.getTitle().toLowerCase().contains(query)) {
+                search.add(book);
+            }
+        }
+        return search;
     }
 
 }
