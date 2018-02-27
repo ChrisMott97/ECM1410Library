@@ -13,7 +13,7 @@ public class Library {
     }
 
     public void write(){
-        Book.write("data/books.txt", books);
+        BookLoan.write("data/bookloans.txt", bookLoans);
     }
 
     public void showAllBooks(){

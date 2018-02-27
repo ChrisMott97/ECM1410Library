@@ -17,5 +17,7 @@ public class Main {
         lib.showAllBooks();
 
         lib.write();
+
+        lib.write();
     }
 }
