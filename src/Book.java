@@ -21,9 +21,22 @@ public class Book {
         this.numberCopies = numberCopies;
     }
 
+    public Book(String title, String[] author, int year, int numberCopies){
+        this.id = -1;
+        this.title = title;
+        this.author = author;
+        this.year = year;
+        this.numberCopies = numberCopies;
+    }
+
     public int getId() {
         return id;
     }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -35,9 +48,6 @@ public class Book {
     }
     public int getNumberCopies() {
         return numberCopies;
-    }
-    public int getAvailable() {
-        return 0;
     }
     public static List<Book> read(String file){
         BufferedReader br;
@@ -87,5 +97,20 @@ public class Book {
         }
         return null;
     }
-
+    public void create(List<Book> books){
+        if(getId() == -1) {
+            int newId = books.get(books.size() - 1).getId() + 1;
+            setId(newId);
+        }
+        if(getBookById(getId(), books) == null){
+            if(getBook(this.getTitle(), books).isEmpty()){
+                books.add(this);
+            }else{
+                System.out.println("Book title already exists!");
+                //TODO Add input to input
+            }
+        }else{
+            System.out.println("Book ID already exists!");
+        }
+    }
 }

@@ -11,5 +11,8 @@ public class Main {
 
         lib.searchBook("java");
         lib.searchMember("Sarah","Hoopern");
+        lib.addNewBook("Da Buuk", new String[]{"Chris Mott"}, 2018, 1);
+
+        lib.showAllBooks();
     }
 }

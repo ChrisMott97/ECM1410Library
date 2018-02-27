@@ -20,6 +20,13 @@ public class BookLoan {
         this.borrowDate = borrowDate;
     }
 
+    public BookLoan(int bookId, int memberId, Date borrowDate){
+        this.id = -1;
+        this.bookId = bookId;
+        this.memberId = memberId;
+        this.borrowDate = borrowDate;
+    }
+
     public static List<BookLoan> read(String file){
         BufferedReader br;
         String line;
@@ -59,16 +66,57 @@ public class BookLoan {
     public Date getBorrowDate() {
         return borrowDate;
     }
-
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public int getBookId() {
         return bookId;
     }
-
     public int getMemberId() {
         return memberId;
+    }
+
+    public static List<BookLoan> getByBookId(int bookId, List<BookLoan> bookLoans){
+        List<BookLoan> results = new ArrayList<>();
+
+        for (BookLoan bookLoan : bookLoans) {
+            if(bookLoan.getBookId() == bookId){
+                results.add(bookLoan);
+            }
+        }
+
+        return results;
+    }
+
+    public static List<BookLoan> getByMemberId(int memberId, List<BookLoan> bookLoans){
+        List<BookLoan> results = new ArrayList<>();
+
+        for (BookLoan bookLoan : bookLoans){
+            if(bookLoan.getMemberId() == memberId){
+                results.add(bookLoan);
+            }
+        }
+
+        return results;
+    }
+
+    public static BookLoan getBookLoan(int bookId, int memberId, List<BookLoan> bookLoans) {
+        List<BookLoan> loans = getByMemberId(memberId, bookLoans);
+        if (!loans.isEmpty()) {
+            List<BookLoan> loan = getByBookId(bookId, loans);
+            if (!loan.isEmpty()) {
+                return loan.get(0);
+            }
+        }
+        return null;
+    }
+
+    public void create(List<BookLoan> bookLoans){
+        return;
     }
 }

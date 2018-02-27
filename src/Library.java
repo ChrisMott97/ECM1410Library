@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 public class Library {
@@ -75,9 +76,10 @@ public class Library {
         List<Book> bookResult = Book.getBook(book, books);
         Member memberResult = Member.getMember(fName, lName, members);
 
-//        if(bookResult.size() == 1 && memberResult != null){
-//
-//        }
+        if(bookResult.size() == 1 && memberResult != null){
+            BookLoan newBookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
+            newBookLoan.create(bookLoans);
+        }
     }
 
     public void searchMember(String fName, String lName){
@@ -109,9 +111,26 @@ public class Library {
                             book.getNumberCopies()
                     );
                 }
+                System.out.println();
             }
         }else{
             System.out.println("No member found");
         }
+    }
+
+    public void addNewBook(String title, String[] authors, int year, int qty){
+        Book book = new Book(title, authors, year, qty);
+        book.create(books);
+
+        System.out.println("Book successfully added to library: ");
+        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
+        System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
+            book.getId(),
+            book.getTitle(),
+            Arrays.toString(book.getAuthor()),
+            book.getYear(),
+            book.getNumberCopies()
+        );
+        System.out.println();
     }
 }
