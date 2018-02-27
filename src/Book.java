@@ -114,7 +114,7 @@ public class Book {
         return null;
     }
 
-    public void addTo(List<Book> books){
+    public boolean addTo(List<Book> books){
         if(getId() == -1) {
             int newId = books.get(books.size() - 1).getId() + 1;
             setId(newId);
@@ -122,6 +122,7 @@ public class Book {
         if(getBookById(getId(), books) == null){
             if(getBook(this.getTitle(), books).isEmpty()){
                 books.add(this);
+                return true;
             }else{
                 System.out.println("Book title already exists!");
                 //TODO Add input to input
@@ -130,5 +131,6 @@ public class Book {
             System.out.println("Book ID already exists!");
             //TODO handle better
         }
+        return false;
     }
 }

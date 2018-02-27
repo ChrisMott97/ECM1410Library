@@ -125,7 +125,20 @@ public class BookLoan {
         return null;
     }
 
-    public void addTo(List<BookLoan> bookLoans){
-        return;
+    public boolean addTo(List<BookLoan> bookLoans){
+        if(getId() == -1) {
+            int newId = bookLoans.get(bookLoans.size() - 1).getId() + 1;
+            setId(newId);
+        }
+        if(getBookLoanById(getId(), bookLoans) == null){
+            if(getBookLoan(getBookId(), getMemberId(), bookLoans) == null){
+                bookLoans.add(this);
+                return true;
+            }
+        }else{
+            System.out.println("Book Loan already exists!");
+            //TODO handle better
+        }
+        return false;
     }
 }

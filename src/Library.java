@@ -12,10 +12,6 @@ public class Library {
         bookLoans = BookLoan.read(bookLoansFileName);
     }
 
-    public void write(){
-        Book.write("data/books.txt", books);
-    }
-
     public void showAllBooks(){
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
         for (Book book : books) {
@@ -78,8 +74,20 @@ public class Library {
         Member memberResult = Member.getMember(fName, lName, members);
 
         if(bookResult.size() == 1 && memberResult != null){
-            BookLoan newBookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
-            newBookLoan.addTo(bookLoans);
+            BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
+            if(bookLoan.addTo(bookLoans)){
+                //BookLoan.write('data/bookloans.txt', bookLoans)
+
+                System.out.println("Book successfully borrowed: ");
+                System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+                System.out.printf("%-8d %-10d %-11d %-15s\n",
+                        bookLoan.getId(),
+                        bookLoan.getBookId(),
+                        bookLoan.getMemberId(),
+                        bookLoan.getBorrowDate().toString()
+                );
+                System.out.println();
+            }
         }
     }
 
@@ -143,17 +151,19 @@ public class Library {
 
     public void addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
-        book.addTo(books);
+        if(book.addTo(books)){
+            Book.write("data/books.txt", books);
 
-        System.out.println("Book successfully added to library: ");
-        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
-        System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
-            book.getId(),
-            book.getTitle(),
-            Arrays.toString(book.getAuthor()),
-            book.getYear(),
-            book.getNumberCopies()
-        );
-        System.out.println();
+            System.out.println("Book successfully added to library: ");
+            System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
+            System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
+                book.getId(),
+                book.getTitle(),
+                Arrays.toString(book.getAuthor()),
+                book.getYear(),
+                book.getNumberCopies()
+            );
+            System.out.println();
+        }
     }
 }
