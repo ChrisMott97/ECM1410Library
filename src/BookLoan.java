@@ -158,7 +158,7 @@ public class BookLoan {
         return null;
     }
 
-    public boolean addTo(){
+    public boolean add(){
         if(getId() == -1) {
             int bookLoanCount = Library.bookLoans.size();
 
