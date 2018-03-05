@@ -5,6 +5,7 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -14,16 +15,16 @@ public class BookLoan {
     private int id;
     private int bookId;
     private int memberId;
-    private Date borrowDate;
+    private LocalDate borrowDate;
 
-    public BookLoan(int id, int bookId, int memberId, Date borrowDate){
+    public BookLoan(int id, int bookId, int memberId, LocalDate borrowDate){
         this.id = id;
         this.bookId = bookId;
         this.memberId = memberId;
         this.borrowDate = borrowDate;
     }
 
-    public BookLoan(int bookId, int memberId, Date borrowDate){
+    public BookLoan(int bookId, int memberId, LocalDate borrowDate){
         this.id = -1;
         this.bookId = bookId;
         this.memberId = memberId;
@@ -41,13 +42,8 @@ public class BookLoan {
 
             while((line = br.readLine()) != null){
                 String[] bookLoan = line.split(",");
-                Date borrowDate = null;
 
-                try {
-                    borrowDate = new SimpleDateFormat("yyyy-MM-dd").parse(bookLoan[3]);
-                } catch (ParseException e){
-                    e.printStackTrace();
-                }
+                LocalDate borrowDate = LocalDate.parse(bookLoan[3]);
 
                 bookLoans.add(new BookLoan(
                         Integer.parseInt(bookLoan[0]),
@@ -84,7 +80,7 @@ public class BookLoan {
         }
     }
 
-    public Date getBorrowDate() {
+    public LocalDate getBorrowDate() {
         return borrowDate;
     }
     public int getId() {

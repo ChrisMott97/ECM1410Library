@@ -1,3 +1,5 @@
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Library {
@@ -78,7 +80,7 @@ public class Library {
         Member memberResult = Member.getMember(fName, lName, members);
 
         if(bookResult.size() == 1 && memberResult != null){
-            BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
+            BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), LocalDate.now());
             if(bookLoan.addTo(bookLoans)){
                 BookLoan.write("data/bookloans.txt", bookLoans);
 
@@ -136,18 +138,16 @@ public class Library {
 
         Calendar cal = Calendar.getInstance();
 
-        Date today = new Date();
-        Date borrowDate = bookLoan.getBorrowDate();
-        Date returnDate;
+        LocalDate today = LocalDate.now();
+        LocalDate borrowDate = bookLoan.getBorrowDate();
+        LocalDate returnDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
-        cal.setTime(borrowDate);
-        cal.add(Calendar.DATE, 30);
-        returnDate = cal.getTime();
+        System.out.println(borrowDate);
+        System.out.println(returnDate);
 
         if (bookLoan != null) {
-            if (returnDate.after(today)) {
+            if (today.isAfter(returnDate)) {
                 System.out.println("YOU PAY!!");
-                //todo localdate difference etc
             } else {
                 System.out.println("YOU NO PAY!!");
             }
