@@ -66,11 +66,11 @@ public class BookLoan {
         return bookLoans;
     }
 
-    public static void write(String file, List<BookLoan> bookLoans){
+    public static void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            for (BookLoan bookLoan : bookLoans) {
+            for (BookLoan bookLoan : Library.bookLoans) {
                 writer.printf("%d,%d,%d,%s\n",
                         bookLoan.getId(),
                         bookLoan.getBookId(),
@@ -102,8 +102,18 @@ public class BookLoan {
         return memberId;
     }
 
-    public static BookLoan getBookLoanById(int id, List<BookLoan> bookLoans) {
-        for (BookLoan bookLoan: bookLoans) {
+    public static int countMemberLoans(int memberId){
+        int count = 0;
+        for (BookLoan bookLoan : Library.bookLoans) {
+            if(bookLoan.getMemberId() == memberId){
+                count += 1;
+            }
+        }
+        return count;
+    }
+
+    public static BookLoan getBookLoanById(int id) {
+        for (BookLoan bookLoan: Library.bookLoans) {
             if (bookLoan.getId() == id) {
                 return bookLoan;
             }
@@ -111,10 +121,10 @@ public class BookLoan {
         return null;
     }
 
-    public static List<BookLoan> getByBookId(int bookId, List<BookLoan> bookLoans){
+    public static List<BookLoan> getByBookId(int bookId){
         List<BookLoan> results = new ArrayList<>();
 
-        for (BookLoan bookLoan : bookLoans) {
+        for (BookLoan bookLoan : Library.bookLoans) {
             if(bookLoan.getBookId() == bookId){
                 results.add(bookLoan);
             }
@@ -123,10 +133,22 @@ public class BookLoan {
         return results;
     }
 
-    public static List<BookLoan> getByMemberId(int memberId, List<BookLoan> bookLoans){
+    public static List<BookLoan> getByBookId(int bookId, List<BookLoan> loans){
         List<BookLoan> results = new ArrayList<>();
 
-        for (BookLoan bookLoan : bookLoans){
+        for (BookLoan bookLoan : loans) {
+            if(bookLoan.getBookId() == bookId){
+                results.add(bookLoan);
+            }
+        }
+
+        return results;
+    }
+
+    public static List<BookLoan> getByMemberId(int memberId){
+        List<BookLoan> results = new ArrayList<>();
+
+        for (BookLoan bookLoan : Library.bookLoans){
             if(bookLoan.getMemberId() == memberId){
                 results.add(bookLoan);
             }
@@ -135,8 +157,8 @@ public class BookLoan {
         return results;
     }
 
-    public static BookLoan getBookLoan(int bookId, int memberId, List<BookLoan> bookLoans) {
-        List<BookLoan> loans = getByMemberId(memberId, bookLoans);
+    public static BookLoan getBookLoan(int bookId, int memberId) {
+        List<BookLoan> loans = getByMemberId(memberId);
         if (!loans.isEmpty()) {
             List<BookLoan> loan = getByBookId(bookId, loans);
             if (!loan.isEmpty()) {
@@ -146,15 +168,28 @@ public class BookLoan {
         return null;
     }
 
-    public boolean addTo(List<BookLoan> bookLoans){
+    public boolean addTo(){
         if(getId() == -1) {
-            int newId = bookLoans.get(bookLoans.size() - 1).getId() + 1;
+            int bookLoanCount = Library.bookLoans.size();
+
+            int newId = Library.bookLoans.get(Library.bookLoans.size() - 1).getId() + 1;
             setId(newId);
         }
-        if(getBookLoanById(getId(), bookLoans) == null){
-            if(getBookLoan(getBookId(), getMemberId(), bookLoans) == null){
-                bookLoans.add(this);
-                return true;
+        if(getBookLoanById(getId()) == null){
+            if(getBookLoan(getBookId(), getMemberId()) == null){
+                if(BookLoan.countMemberLoans(getMemberId()) < 5){
+                    if(Book.getBookById(getBookId()).getAvailable() > 0){
+                        Library.bookLoans.add(this);
+                        return true;
+                    }
+                    else{
+                        System.out.println("This book has 0 copies available!");
+                    }
+                }else{
+                    System.out.println("Member already has the maximum of 5 book loans!");
+                }
+            }else{
+                System.out.println("Member already owns book!");
             }
         }else{
             System.out.println("Book Loan already exists!");

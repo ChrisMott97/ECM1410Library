@@ -20,6 +20,10 @@ public class Main {
 
         lib.addNewMember("Ors", "Barkanyi", new Date());
 
+        lib.addNewBook("Puush", new String[]{"Ors Barkanyi"}, 2018, 1);
+
+        lib.borrowBook("Puush", "John", "Cooper");
+
         //TODO Add all library functions with no arguments w/ input
     }
 }

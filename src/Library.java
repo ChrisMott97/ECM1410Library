@@ -2,18 +2,14 @@ import java.util.*;
 
 public class Library {
 
-    List<Book> books;
-    List<Member>  members;
-    List<BookLoan> bookLoans;
+    static List<Book> books;
+    static List<Member>  members;
+    static List<BookLoan> bookLoans;
 
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
         books = Book.read(booksFileName);
         members = Member.read(membersFileName);
         bookLoans = BookLoan.read(bookLoansFileName);
-    }
-
-    public void write(){
-        Member.write("data/members.txt", members);
     }
 
     public void showAllBooks(){
@@ -55,7 +51,7 @@ public class Library {
     }
 
     public void searchBook(String query){
-        List<Book> results = Book.getBook(query, books);
+        List<Book> results = Book.getBook(query);
         if(!results.isEmpty()){
             System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
             for (Book book : results) {
@@ -74,13 +70,13 @@ public class Library {
     }
 
     public void borrowBook(String book, String fName, String lName){
-        List<Book> bookResult = Book.getBook(book, books);
-        Member memberResult = Member.getMember(fName, lName, members);
+        List<Book> bookResult = Book.getBook(book);
+        Member memberResult = Member.getMember(fName, lName);
 
         if(bookResult.size() == 1 && memberResult != null){
             BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), new Date());
-            if(bookLoan.addTo(bookLoans)){
-                BookLoan.write("data/bookloans.txt", bookLoans);
+            if(bookLoan.addTo()){
+                BookLoan.write("data/bookloans.txt");
 
                 System.out.println("Book successfully borrowed: ");
                 System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
@@ -96,7 +92,7 @@ public class Library {
     }
 
     public void searchMember(String fName, String lName){
-        Member member = Member.getMember(fName, lName, members);
+        Member member = Member.getMember(fName, lName);
         if(member != null){
             System.out.printf("%-7s %-30s %-35s %-8s\n","ID", "First Name", "Last Name", "Date Joined");
             System.out.printf("%-7s %-30s %-35s %-8s\n",
@@ -108,7 +104,7 @@ public class Library {
             List<Book> bookResults = new ArrayList<>();
             for (BookLoan bookLoan : bookLoans){
                 if (bookLoan.getMemberId() == member.getId()){
-                   bookResults.add(Book.getBookById(bookLoan.getBookId(), books));
+                   bookResults.add(Book.getBookById(bookLoan.getBookId()));
                 }
             }
             if(!bookResults.isEmpty()) {
@@ -132,7 +128,7 @@ public class Library {
     }
 
     public void returnBook(int id) {
-        BookLoan bookLoan = BookLoan.getBookLoanById(id, bookLoans);
+        BookLoan bookLoan = BookLoan.getBookLoanById(id);
 
         Calendar cal = Calendar.getInstance();
 
@@ -156,7 +152,7 @@ public class Library {
 
     public void addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
-        if(book.addTo(books)){
+        if(book.addTo()){
             Book.write("data/books.txt", books);
 
             System.out.println("Book successfully added to library: ");
@@ -176,8 +172,8 @@ public class Library {
         Date dateNow = new Date();
         //TODO adjust to LocalDate
         Member member = new Member(fName, lName, dateNow);
-        if(member.addTo(members)){
-            Member.write("data/members.txt", members);
+        if(member.addTo()){
+            Member.write("data/members.txt");
 
             System.out.println("Member successfully added: ");
             System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");

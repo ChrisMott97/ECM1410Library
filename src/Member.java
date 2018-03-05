@@ -64,11 +64,11 @@ public class Member {
         return members;
     }
 
-    public static void write(String file, List<Member> members){
+    public static void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-            for (Member member : members) {
+            for (Member member : Library.members) {
                 writer.printf("%d,%s,%s,%s\n",
                         member.getId(),
                         member.getFName(),
@@ -86,11 +86,9 @@ public class Member {
     public int getId(){
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public String getFName(){
         return fName;
     }
@@ -100,10 +98,10 @@ public class Member {
     public Date getDateJoin(){
         return dateJoin;
     }
-    public static Member getMember(String fName, String lName, List<Member> members){
+    public static Member getMember(String fName, String lName){
         fName = fName.toLowerCase();
         lName = lName.toLowerCase();
-        for (Member member: members) {
+        for (Member member: Library.members) {
             if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
                 return member;
             }
@@ -111,8 +109,8 @@ public class Member {
         return null;
     }
 
-    public static Member getMemberById(int id, List<Member> members){
-        for (Member member : members) {
+    public static Member getMemberById(int id){
+        for (Member member : Library.members) {
             if(member.getId() == id){
                 return member;
             }
@@ -120,14 +118,14 @@ public class Member {
         return null;
     }
 
-    public boolean addTo(List<Member> members){
+    public boolean addTo(){
         if(getId() == -1) {
-            int newId = members.get(members.size() - 1).getId() + 1;
+            int newId = Library.members.get(Library.members.size() - 1).getId() + 1;
             setId(newId);
         }
-        if(getMemberById(getId(), members) == null){
-            if(getMember(getFName(), getLName(), members) == null){
-                members.add(this);
+        if(getMemberById(getId()) == null){
+            if(getMember(getFName(), getLName()) == null){
+                Library.members.add(this);
                 return true;
             }else{
                 System.out.println("Member already exists with this name!");

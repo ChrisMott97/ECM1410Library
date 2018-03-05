@@ -78,11 +78,9 @@ public class Book {
     public int getId() {
         return id;
     }
-
     public void setId(int id) {
         this.id = id;
     }
-
     public String getTitle() {
         return title;
     }
@@ -95,18 +93,27 @@ public class Book {
     public int getNumberCopies() {
         return numberCopies;
     }
-    public static List<Book> getBook(String query, List<Book> books){
+    public int getAvailable(){
+        int result = 0;
+        for (BookLoan bookLoan : Library.bookLoans) {
+            if(bookLoan.getBookId() == getId()){
+                result++;
+            }
+        }
+        return getNumberCopies() - result;
+    }
+    public static List<Book> getBook(String query){
         query = query.toLowerCase();
         List<Book> search = new ArrayList<>();
-        for (Book book: books) {
+        for (Book book: Library.books) {
             if (book.getTitle().toLowerCase().contains(query)) {
                 search.add(book);
             }
         }
         return search;
     }
-    public static Book getBookById(int id, List<Book> books){
-        for (Book book: books) {
+    public static Book getBookById(int id){
+        for (Book book: Library.books) {
             if (book.getId() == id) {
                 return book;
             }
@@ -114,15 +121,14 @@ public class Book {
         return null;
     }
 
-    public boolean addTo(List<Book> books){
+    public boolean addTo(){
         if(getId() == -1) {
-            int newId = books.get(books.size() - 1).getId() + 1;
+            int newId = Library.books.get(Library.books.size() - 1).getId() + 1;
             setId(newId);
         }
-        if(getBookById(getId(), books) == null){
-            if(getBook(this.getTitle(), books).isEmpty()){
-                //TODO Only add if member hasn't borrowed 5 or more books
-                books.add(this);
+        if(getBookById(getId()) == null){
+            if(getBook(this.getTitle()).isEmpty()){
+                Library.books.add(this);
                 return true;
             }else{
                 System.out.println("Book title already exists!");
