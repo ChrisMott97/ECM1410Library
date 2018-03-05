@@ -124,9 +124,11 @@ public class Library {
                 }
             }
             if(!bookResults.isEmpty()) {
+                int bookCount = 0;
                 System.out.printf("%7s\n","|");
                 System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies", "Available");
                 for (Book book : bookResults){
+                    bookCount++;
                     System.out.printf("%7s %-9d %-30s %-35s %-5d %-17d %-3d\n",
                             "|",
                             book.getId(),
@@ -137,7 +139,8 @@ public class Library {
                             book.getAvailable()
                     );
                 }
-                System.out.println();
+                System.out.printf("%7s\n","|");
+                System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
             }
         }else{
             System.out.println("No member found");
@@ -147,20 +150,39 @@ public class Library {
     public void returnBook(int id) {
         BookLoan bookLoan = BookLoan.getBookLoanById(id);
 
-        Calendar cal = Calendar.getInstance();
-
         LocalDate today = LocalDate.now();
         LocalDate borrowDate = bookLoan.getBorrowDate();
-        LocalDate returnDate = borrowDate.plus(30, ChronoUnit.DAYS);
+        LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
         System.out.println(borrowDate);
-        System.out.println(returnDate);
+        System.out.println(dueDate);
 
         if (bookLoan != null) {
-            if (today.isAfter(returnDate)) {
-                System.out.println("YOU PAY!!");
+            if (today.isAfter(dueDate)) {
+                long daysOverdue = ChronoUnit.DAYS.between(dueDate, today);
+                float fine = daysOverdue * 0.1f;
+
+                System.out.printf("OVERDUE! Fine: £%.2f\n", fine);
+                System.out.println("Is the fine paid? (y/n)");
+
+                Scanner in = new Scanner(System.in);
+                String userInput = in.next();
+                switch (userInput) {
+                    case "y":
+                    case "Y":
+                        Library.bookLoans.remove(bookLoan);
+                        bookLoan.write("data/bookloans.txt");
+                        System.out.println("Book successfully returned");
+                        break;
+                    case "n":
+                    case "N":
+                        System.out.println("Book cannot be returned until fine is paid");
+                        break;
+                    default:
+                        System.out.println("Invalid input, book remains overdue");
+                }
             } else {
-                System.out.println("YOU NO PAY!!");
+                System.out.println("Return successful");
             }
         }
     }
