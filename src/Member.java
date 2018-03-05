@@ -2,26 +2,24 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class Member {
     private int id;
     private String fName;
     private String lName;
-    private Date dateJoin;
+    private LocalDate dateJoin;
 
-    public Member(int id, String fName, String lName, Date dateJoin){
+    public Member(int id, String fName, String lName, LocalDate dateJoin){
         this.id = id;
         this.fName = fName;
         this.lName = lName;
         this.dateJoin = dateJoin;
     }
 
-    public Member(String fName, String lName, Date dateJoin){
+    public Member(String fName, String lName, LocalDate dateJoin){
         this.id = -1;
         this.fName = fName;
         this.lName = lName;
@@ -39,13 +37,8 @@ public class Member {
 
             while((line = br.readLine()) != null){
                 String[] member = line.split(",");
-                Date date = null;
 
-                try {
-                     date = new SimpleDateFormat("yyyy-MM-dd").parse(member[3]);
-                } catch (ParseException e){
-                    e.printStackTrace();
-                }
+                LocalDate date = LocalDate.parse(member[3]);
 
                 members.add(new Member(
                         Integer.parseInt(member[0]),
@@ -67,13 +60,13 @@ public class Member {
     public static void write(String file, List<Member> members){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
             for (Member member : members) {
                 writer.printf("%d,%s,%s,%s\n",
                         member.getId(),
                         member.getFName(),
                         member.getLName(),
-                        dateFormat.format(member.getDateJoin())
+                        member.getDateJoin()
                 );
             }
             writer.close();
@@ -97,7 +90,7 @@ public class Member {
     public String getLName(){
         return lName;
     }
-    public Date getDateJoin(){
+    public LocalDate getDateJoin(){
         return dateJoin;
     }
     public static Member getMember(String fName, String lName, List<Member> members){

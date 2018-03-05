@@ -1,3 +1,5 @@
+
+
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -90,7 +92,7 @@ public class Library {
                         bookLoan.getId(),
                         bookLoan.getBookId(),
                         bookLoan.getMemberId(),
-                        bookLoan.getBorrowDate().toString()
+                        bookLoan.getBorrowDate()
                 );
                 System.out.println();
             }
@@ -172,9 +174,8 @@ public class Library {
         }
     }
 
-    public void addNewMember(String fName, String lName, Date date){
-        Date dateNow = new Date();
-        //TODO adjust to LocalDate
+    public void addNewMember(String fName, String lName, LocalDate date){
+        LocalDate dateNow = LocalDate.now();
         Member member = new Member(fName, lName, dateNow);
         if(member.addTo(members)){
             Member.write("data/members.txt", members);
@@ -185,7 +186,7 @@ public class Library {
                     member.getId(),
                     member.getFName(),
                     member.getLName(),
-                    member.getDateJoin().toString()
+                    member.getDateJoin()
             );
             System.out.println();
         }

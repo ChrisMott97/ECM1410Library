@@ -2,13 +2,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class BookLoan {
@@ -65,13 +60,13 @@ public class BookLoan {
     public static void write(String file, List<BookLoan> bookLoans){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
             for (BookLoan bookLoan : bookLoans) {
                 writer.printf("%d,%d,%d,%s\n",
                         bookLoan.getId(),
                         bookLoan.getBookId(),
                         bookLoan.getMemberId(),
-                        dateFormat.format(bookLoan.getBorrowDate())
+                        bookLoan.getBorrowDate()
                 );
             }
             writer.close();
