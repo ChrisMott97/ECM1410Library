@@ -1,5 +1,4 @@
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
 
 public class Main {
 
@@ -18,7 +17,9 @@ public class Main {
         lib.showAllBooks();
         lib.borrowBook("Da Buuk", "Sarah", "Hoopern");
 
-        lib.addNewMember("Ors", "Barkanyi", new Date());
+        lib.borrowBook("Da Buuk", "Ors", "Barkanyi");
+
+        lib.addNewMember("Orsh", "Barkanyi", LocalDate.now());
 
         lib.addNewBook("Puush", new String[]{"Ors Barkanyi"}, 2018, 1);
 

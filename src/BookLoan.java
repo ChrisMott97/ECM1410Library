@@ -2,28 +2,24 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 public class BookLoan {
     private int id;
     private int bookId;
     private int memberId;
-    private Date borrowDate;
+    private LocalDate borrowDate;
 
-    public BookLoan(int id, int bookId, int memberId, Date borrowDate){
+    public BookLoan(int id, int bookId, int memberId, LocalDate borrowDate){
         this.id = id;
         this.bookId = bookId;
         this.memberId = memberId;
         this.borrowDate = borrowDate;
     }
 
-    public BookLoan(int bookId, int memberId, Date borrowDate){
+    public BookLoan(int bookId, int memberId, LocalDate borrowDate){
         this.id = -1;
         this.bookId = bookId;
         this.memberId = memberId;
@@ -41,13 +37,8 @@ public class BookLoan {
 
             while((line = br.readLine()) != null){
                 String[] bookLoan = line.split(",");
-                Date borrowDate = null;
 
-                try {
-                    borrowDate = new SimpleDateFormat("yyyy-MM-dd").parse(bookLoan[3]);
-                } catch (ParseException e){
-                    e.printStackTrace();
-                }
+                LocalDate borrowDate = LocalDate.parse(bookLoan[3]);
 
                 bookLoans.add(new BookLoan(
                         Integer.parseInt(bookLoan[0]),
@@ -69,13 +60,12 @@ public class BookLoan {
     public static void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             for (BookLoan bookLoan : Library.bookLoans) {
                 writer.printf("%d,%d,%d,%s\n",
                         bookLoan.getId(),
                         bookLoan.getBookId(),
                         bookLoan.getMemberId(),
-                        dateFormat.format(bookLoan.getBorrowDate())
+                        bookLoan.getBorrowDate()
                 );
             }
             writer.close();
@@ -84,7 +74,7 @@ public class BookLoan {
         }
     }
 
-    public Date getBorrowDate() {
+    public LocalDate getBorrowDate() {
         return borrowDate;
     }
     public int getId() {
