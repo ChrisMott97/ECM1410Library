@@ -9,7 +9,6 @@ public class Book {
     private String[] author;
     private int year;
     private int numberCopies;
-    private int available;
 
     public Book(int id, String title, String[] author, int year, int numberCopies){
         this.id = id;
@@ -56,10 +55,10 @@ public class Book {
 
         return books;
     }
-    public static void write(String file, List<Book> books){
+    public static void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
-            for (Book book : books) {
+            for (Book book : Library.books) {
                 String authors = Arrays.toString(book.getAuthor());
                 writer.printf("%d,%s,%s,%d,%d\n",
                         book.getId(),
@@ -138,6 +137,17 @@ public class Book {
             System.out.println("Book ID already exists!");
             //TODO handle better
         }
+        System.out.println();
+        return false;
+    }
+
+    public boolean changeNumberCopies(int qty) {
+        if(this.getAvailable() + qty >= 0){
+            this.numberCopies += qty;
+            return true;
+        }
+        System.out.println("Invalid quantity!");
+        System.out.println();
         return false;
     }
 }

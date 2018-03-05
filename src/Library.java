@@ -10,21 +10,31 @@ public class Library {
     static List<Member>  members;
     static List<BookLoan> bookLoans;
 
+    String booksFileName;
+    String membersFileName;
+    String bookLoansFileName;
+
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
         books = Book.read(booksFileName);
+        this.booksFileName = booksFileName;
+
         members = Member.read(membersFileName);
+        this.membersFileName = membersFileName;
+
         bookLoans = BookLoan.read(bookLoansFileName);
+        this.bookLoansFileName = bookLoansFileName;
     }
 
     public void showAllBooks(){
-        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
+        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
         for (Book book : books) {
-            System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
+            System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3s\n",
                     book.getId(),
                     book.getTitle(),
                     Arrays.toString(book.getAuthor()),
                     book.getYear(),
-                    book.getNumberCopies()
+                    book.getNumberCopies(),
+                    book.getAvailable()
             );
         }
         System.out.println();
@@ -51,20 +61,22 @@ public class Library {
                     bookLoan.getBorrowDate().toString()
             );
         }
+        //TODO show full book and member info for each loan
         System.out.println();
     }
 
     public void searchBook(String query){
         List<Book> results = Book.getBook(query);
         if(!results.isEmpty()){
-            System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies");
+            System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies", "Available");
             for (Book book : results) {
-                System.out.printf("%-7s %-30s %-35s %-5s %-3s\n",
+                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
                         book.getId(),
                         book.getTitle(),
                         Arrays.toString(book.getAuthor()),
                         book.getYear(),
-                        book.getNumberCopies()
+                        book.getNumberCopies(),
+                        book.getAvailable()
                 );
             }
         }else{
@@ -80,7 +92,7 @@ public class Library {
         if(bookResult.size() == 1 && memberResult != null){
             BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), LocalDate.now());
             if(bookLoan.addTo()){
-                BookLoan.write("data/bookloans.txt");
+                BookLoan.write(bookLoansFileName);
 
                 System.out.println("Book successfully borrowed: ");
                 System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
@@ -113,15 +125,16 @@ public class Library {
             }
             if(!bookResults.isEmpty()) {
                 System.out.printf("%7s\n","|");
-                System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies");
+                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies", "Available");
                 for (Book book : bookResults){
-                    System.out.printf("%7s %-9s %-30s %-35s %-5s %-3s\n",
+                    System.out.printf("%7s %-9d %-30s %-35s %-5d %-17d %-3d\n",
                             "|",
                             book.getId(),
                             book.getTitle(),
                             Arrays.toString(book.getAuthor()),
                             book.getYear(),
-                            book.getNumberCopies()
+                            book.getNumberCopies(),
+                            book.getAvailable()
                     );
                 }
                 System.out.println();
@@ -155,7 +168,7 @@ public class Library {
     public void addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
         if(book.addTo()){
-            Book.write("data/books.txt", books);
+            Book.write(booksFileName);
 
             System.out.println("Book successfully added to library: ");
             System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
@@ -171,10 +184,9 @@ public class Library {
     }
 
     public void addNewMember(String fName, String lName, LocalDate date){
-        LocalDate dateNow = LocalDate.now();
-        Member member = new Member(fName, lName, dateNow);
+        Member member = new Member(fName, lName, date);
         if(member.addTo()){
-            Member.write("data/members.txt");
+            Member.write(membersFileName);
 
             System.out.println("Member successfully added: ");
             System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
@@ -184,6 +196,71 @@ public class Library {
                     member.getLName(),
                     member.getDateJoin()
             );
+            System.out.println();
+        }
+    }
+
+    public void changeQuantity(String query, int qty){
+        List<Book> results = Book.getBook(query);
+        if(results.size() > 1) {
+            System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
+            for (Book book : results) {
+                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
+                        book.getId(),
+                        book.getTitle(),
+                        Arrays.toString(book.getAuthor()),
+                        book.getYear(),
+                        book.getNumberCopies(),
+                        book.getAvailable()
+                );
+            }
+            System.out.printf("%d results found. Please enter ID of the one you want to change:", results.size());
+            System.out.println();
+            boolean found = false;
+            while(!found){
+                Scanner in = new Scanner(System.in);
+                String id = in.next();
+                Book book = Book.getBookById(Integer.parseInt(id));
+                if(book != null){
+                    found = true;
+                    if(book.changeNumberCopies(qty)){
+                        Book.write(booksFileName);
+                        System.out.println("Book quantity updated successfully!");
+                        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
+                        System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
+                                book.getId(),
+                                book.getTitle(),
+                                Arrays.toString(book.getAuthor()),
+                                book.getYear(),
+                                book.getNumberCopies(),
+                                book.getAvailable()
+                        );
+                        System.out.println();
+                    }
+                }else{
+                    System.out.println("Book ID not found, please try again.");
+                }
+                System.out.println();
+            }
+        }else if(results.size() == 1){
+            Book book = results.get(0);
+            if(book.changeNumberCopies(qty)){
+                Book.write(booksFileName);
+
+                System.out.println("Book quantity updated successfully!");
+                System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
+                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
+                        book.getId(),
+                        book.getTitle(),
+                        Arrays.toString(book.getAuthor()),
+                        book.getYear(),
+                        book.getNumberCopies(),
+                        book.getAvailable()
+                );
+                System.out.println();
+            }
+        }else{
+            System.out.println("No books found.");
             System.out.println();
         }
     }

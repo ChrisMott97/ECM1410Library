@@ -24,6 +24,7 @@ public class Main {
         lib.addNewBook("Puush", new String[]{"Ors Barkanyi"}, 2018, 1);
 
         lib.borrowBook("Puush", "John", "Cooper");
+        lib.changeQuantity("Data Mining",1);
 
         //TODO Add all library functions with no arguments w/ input
     }

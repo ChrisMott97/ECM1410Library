@@ -125,6 +125,7 @@ public class Member {
         }else{
             System.out.println("Member already exists with this ID");
         }
+        System.out.println();
         return false;
     }
 }

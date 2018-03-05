@@ -185,6 +185,7 @@ public class BookLoan {
             System.out.println("Book Loan already exists!");
             //TODO handle better
         }
+        System.out.println();
         return false;
     }
 }
