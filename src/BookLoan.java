@@ -98,7 +98,7 @@ public class BookLoan {
         LocalDate borrowDate = getBorrowDate();
         LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
-        return today.isAfter(dueDate)
+        return today.isAfter(dueDate);
     }
 
     public static int countMemberLoans(int memberId){

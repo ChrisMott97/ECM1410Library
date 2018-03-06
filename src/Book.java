@@ -120,6 +120,37 @@ public class Book {
         }
         return null;
     }
+    public static Book multipleBooks(List<Book> books){
+        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
+        for (Book book : books) {
+            System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
+                    book.getId(),
+                    book.getTitle(),
+                    Arrays.toString(book.getAuthor()),
+                    book.getYear(),
+                    book.getNumberCopies(),
+                    book.getAvailable()
+            );
+        }
+        System.out.printf("%d results found. Please enter ID of the one you want to change:", books.size());
+        System.out.println();
+        boolean found = false;
+        while(!found){
+            Scanner in = new Scanner(System.in);
+            String id = in.next();
+            Book book = Book.getBookById(Integer.parseInt(id));
+            if(book != null){
+                return book;
+            }else{
+                if(!Library.yesNoDecision("Wrong ID, would you like to try again?")){
+                    found = true;
+                }
+            }
+            System.out.println();
+        }
+        return null;
+    }
+
 
     public boolean add(){
         if(getId() == -1) {

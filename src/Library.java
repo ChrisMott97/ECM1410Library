@@ -79,6 +79,7 @@ public class Library {
                         book.getAvailable()
                 );
             }
+            System.out.println();
             return true;
         }else{
             System.out.println("No books found.");
@@ -92,25 +93,32 @@ public class Library {
         System.out.println("Search Book");
 
         System.out.print("Query: ");
-        String query = in.next();
+        String query = in.nextLine();
         System.out.println();
 
-        if(searchBook(query)){
-            //TODO Ask for other input or handle errors etc
+        if(!searchBook(query)){
+            System.out.println("Please try again.");
+        }
+        if(yesNoDecision("Would you like to search again? ")){
+            searchBook();
         }
     }
 
-    public void borrowBook(String book, String fName, String lName){
-        List<Book> bookResult = Book.getBook(book);
+    public boolean borrowBook(String book, String fName, String lName){
+        List<Book> bookResults = Book.getBook(book);
         Member memberResult = Member.getMember(fName, lName);
 
-        if(bookResult.size() == 1 && memberResult != null){
-            BookLoan bookLoan = new BookLoan(bookResult.get(0).getId(), memberResult.getId(), LocalDate.now());
-            if(bookLoan.add()){
+        if(memberResult == null) {
+            System.out.println("Member does not exist.");
+            return false;
+        }
+        if(bookResults.size() == 1){
+            BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResult.getId(), LocalDate.now());
+            if (bookLoan.add()) {
                 BookLoan.write(bookLoansFileName);
 
                 System.out.println("Book successfully borrowed: ");
-                System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+                System.out.printf("%-8s %-10s %-11s %-15s\n", "ID", "Book ID", "Member ID", "Borrow Date");
                 System.out.printf("%-8d %-10d %-11d %-15s\n",
                         bookLoan.getId(),
                         bookLoan.getBookId(),
@@ -118,32 +126,55 @@ public class Library {
                         bookLoan.getBorrowDate()
                 );
                 System.out.println();
+                return true;
+            }
+        }else if(bookResults.size() > 1){
+            Book bookResult = Book.multipleBooks(bookResults);
+            if(bookResult != null){
+                BookLoan bookLoan = new BookLoan(bookResult.getId(), memberResult.getId(), LocalDate.now());
+                if (bookLoan.add()) {
+                    BookLoan.write(bookLoansFileName);
+
+                    System.out.println("Book successfully borrowed: ");
+                    System.out.printf("%-8s %-10s %-11s %-15s\n", "ID", "Book ID", "Member ID", "Borrow Date");
+                    System.out.printf("%-8d %-10d %-11d %-15s\n",
+                            bookLoan.getId(),
+                            bookLoan.getBookId(),
+                            bookLoan.getMemberId(),
+                            bookLoan.getBorrowDate()
+                    );
+                    System.out.println();
+                    return true;
+                }
             }
         }else{
-            //TODO Handle wrong inputs by returning true/false to input functions
+            System.out.println("No books found!");
         }
+        return false;
     }
 
     public void borrowBook(){
         Scanner in = new Scanner(System.in);
         System.out.println("Borrow Book");
 
-        System.out.print("Book: ");
-        String book = in.next();
+        System.out.print("Book Title: ");
+        String book = in.nextLine();
         System.out.println();
 
-        System.out.print("Member First Name: ");
+        System.out.print("Member Full Name: ");
         String fName = in.next();
-        System.out.println();
-
-        System.out.print("Member Last Name: ");
         String lName = in.next();
         System.out.println();
 
-        borrowBook(book, fName, lName);
+        if(!borrowBook(book, fName, lName)){
+            System.out.println("Could not borrow book.");
+        }
+        if(yesNoDecision("Would you like to borrow another?")){
+            borrowBook();
+        }
     }
 
-    public void searchMember(String fName, String lName){
+    public boolean searchMember(String fName, String lName){
         Member member = Member.getMember(fName, lName);
         if(member != null){
             System.out.printf("%-7s %-30s %-35s %-8s\n","ID", "First Name", "Last Name", "Date Joined");
@@ -190,22 +221,27 @@ public class Library {
                 }
                 System.out.printf("%7s\n","|");
                 System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
+                return true;
             }
         }else{
             System.out.println("No member found");
         }
+        return false;
     }
 
     public void searchMember(){
         Scanner in = new Scanner(System.in);
         System.out.println("Search Member");
-        System.out.print("First Name: ");
-        String fName = in.next();
+        System.out.print("Full Name: ");
+        String fName = in.nextLine();
+        String lName = in.nextLine();
         System.out.println();
-        System.out.print("Last Name: ");
-        String lName = in.next();
-        System.out.println();
-        searchMember(fName, lName);
+        if(!searchMember(fName, lName)){
+            System.out.println("Could not complete search.");
+        }
+        if(yesNoDecision("Would you like to try again?")){
+            searchMember();
+        }
     }
 
     public void returnBook(int id) {
@@ -221,11 +257,10 @@ public class Library {
                 float fine = daysOverdue * 0.1f;
 
                 System.out.printf("OVERDUE! Fine: £%.2f\n", fine);
-                System.out.println("Is the fine paid? (y/n)");
 
                 if(yesNoDecision("Is the fine paid? ")){
                     Library.bookLoans.remove(bookLoan);
-                    bookLoan.write("data/bookloans.txt");
+                    bookLoan.write(bookLoansFileName);
                     System.out.println("Book successfully returned");
                 }else{
                     System.out.println("Book cannot be returned until fine is paid");
@@ -275,68 +310,30 @@ public class Library {
         }
     }
 
-    public static boolean yesNoDecision(String message){
-        System.out.println(message + "y/n");
-        Scanner in = new Scanner(System.in);
-        char userInput = in.next().charAt(0);
-        switch (userInput){
-            case 'y':
-            case 'Y':
-                return true;
-            case 'n':
-            case 'N':
-                return false;
-            default:
-                System.out.println("Invalid input.");
-                return yesNoDecision(message);
-
-        }
-    }
-
-    public void changeQuantity(String query, int qty){
+    public boolean changeQuantity(String query, int qty){
         List<Book> results = Book.getBook(query);
         if(results.size() > 1) {
-            System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
-            for (Book book : results) {
-                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
-                        book.getId(),
-                        book.getTitle(),
-                        Arrays.toString(book.getAuthor()),
-                        book.getYear(),
-                        book.getNumberCopies(),
-                        book.getAvailable()
-                );
-            }
-            System.out.printf("%d results found. Please enter ID of the one you want to change:", results.size());
-            System.out.println();
-            boolean found = false;
-            while(!found){
-                Scanner in = new Scanner(System.in);
-                String id = in.next();
-                Book book = Book.getBookById(Integer.parseInt(id));
-                if(book != null){
-                    found = true;
-                    if(book.changeNumberCopies(qty)){
-                        Book.write(booksFileName);
-                        System.out.println("Book quantity updated successfully!");
-                        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
-                        System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
-                                book.getId(),
-                                book.getTitle(),
-                                Arrays.toString(book.getAuthor()),
-                                book.getYear(),
-                                book.getNumberCopies(),
-                                book.getAvailable()
-                        );
-                        System.out.println();
-                    }else{
-                        System.out.println("Quantity invalid.");
-                    }
+            Book book = Book.multipleBooks(results);
+            if(book != null){
+                if(book.changeNumberCopies(qty)){
+                    Book.write(booksFileName);
+                    System.out.println("Book quantity updated successfully!");
+                    System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
+                    System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
+                            book.getId(),
+                            book.getTitle(),
+                            Arrays.toString(book.getAuthor()),
+                            book.getYear(),
+                            book.getNumberCopies(),
+                            book.getAvailable()
+                    );
+                    System.out.println();
+                    return true;
                 }else{
-                    System.out.println("Book ID not found, please try again.");
+                    System.out.println("Quantity invalid.");
                 }
-                System.out.println();
             }
+
         }else if(results.size() == 1){
             Book book = results.get(0);
             if(book.changeNumberCopies(qty)){
@@ -353,10 +350,30 @@ public class Library {
                         book.getAvailable()
                 );
                 System.out.println();
+                return true;
             }
         }else{
             System.out.println("No books found.");
             System.out.println();
+        }
+        return false;
+    }
+
+    public static boolean yesNoDecision(String message){
+        System.out.println(message + "y/n");
+        Scanner in = new Scanner(System.in);
+        char userInput = in.nextLine().charAt(0);
+        switch (userInput){
+            case 'y':
+            case 'Y':
+                return true;
+            case 'n':
+            case 'N':
+                return false;
+            default:
+                System.out.println("Invalid input.");
+                return yesNoDecision(message);
+
         }
     }
 }
