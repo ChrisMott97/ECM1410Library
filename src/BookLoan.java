@@ -92,13 +92,15 @@ public class BookLoan {
     public int getMemberId() {
         return memberId;
     }
-
+    public LocalDate getDueDate(){ return borrowDate.plus(30, ChronoUnit.DAYS); }
+    public float getFine() {
+        long daysOverdue = ChronoUnit.DAYS.between(getDueDate(), LocalDate.now());
+        return daysOverdue * 0.1f;
+    }
     public boolean isOverdue(){
         LocalDate today = LocalDate.now();
-        LocalDate borrowDate = getBorrowDate();
-        LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
-        return today.isAfter(dueDate)
+        return today.isAfter(getDueDate());
     }
 
     public static int countMemberLoans(int memberId){

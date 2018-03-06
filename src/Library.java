@@ -168,13 +168,7 @@ public class Library {
 
                     BookLoan loan = BookLoan.getBookLoan(book.getId(), member.getId());
 
-                    LocalDate dueDate = loan.getBorrowDate().plus(30, ChronoUnit.DAYS);
-                    LocalDate today = LocalDate.now();
-                    String warning = "On Loan";
-                    if (today.isAfter(dueDate)){
-                        warning = "OVERDUE";
-                    }
-
+                    String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
                     System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
                             "|",
@@ -183,7 +177,7 @@ public class Library {
                             Arrays.toString(book.getAuthor()),
                             book.getYear(),
                             loan.getBorrowDate().toString(),
-                            dueDate.toString(),
+                            loan.getDueDate().toString(),
                             warning
 
                     );
@@ -212,16 +206,10 @@ public class Library {
         BookLoan bookLoan = BookLoan.getBookLoanById(id);
 
         if (bookLoan != null) {
-            LocalDate today = LocalDate.now();
-            LocalDate borrowDate = bookLoan.getBorrowDate();
-            LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
-            if (today.isAfter(dueDate)) {
-                long daysOverdue = ChronoUnit.DAYS.between(dueDate, today);
-                float fine = daysOverdue * 0.1f;
+            if (bookLoan.isOverdue()) {
 
-                System.out.printf("OVERDUE! Fine: £%.2f\n", fine);
-                System.out.println("Is the fine paid? (y/n)");
+                System.out.printf("OVERDUE! Fine: £%.2f\n", bookLoan.getFine());
 
                 if(yesNoDecision("Is the fine paid? ")){
                     Library.bookLoans.remove(bookLoan);
