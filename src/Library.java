@@ -126,17 +126,30 @@ public class Library {
             if(!bookResults.isEmpty()) {
                 int bookCount = 0;
                 System.out.printf("%7s\n","|");
-                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-3s\n","|","Loan ID", "Title", "Author", "Year", "Number of Copies", "Available");
+                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n","|","Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
                 for (Book book : bookResults){
                     bookCount++;
-                    System.out.printf("%7s %-9d %-30s %-35s %-5d %-17d %-3d\n",
+
+                    BookLoan loan = BookLoan.getBookLoan(book.getId(), member.getId());
+
+                    LocalDate dueDate = loan.getBorrowDate().plus(30, ChronoUnit.DAYS);
+                    LocalDate today = LocalDate.now();
+                    String warning = "On Loan";
+                    if (today.isAfter(dueDate)){
+                        warning = "OVERDUE";
+                    }
+
+
+                    System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
                             "|",
                             book.getId(),
                             book.getTitle(),
                             Arrays.toString(book.getAuthor()),
                             book.getYear(),
-                            book.getNumberCopies(),
-                            book.getAvailable()
+                            loan.getBorrowDate().toString(),
+                            dueDate.toString(),
+                            warning
+
                     );
                 }
                 System.out.printf("%7s\n","|");
@@ -154,8 +167,6 @@ public class Library {
         LocalDate borrowDate = bookLoan.getBorrowDate();
         LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
 
-        System.out.println(borrowDate);
-        System.out.println(dueDate);
 
         if (bookLoan != null) {
             if (today.isAfter(dueDate)) {

@@ -3,6 +3,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -90,6 +91,14 @@ public class BookLoan {
     }
     public int getMemberId() {
         return memberId;
+    }
+
+    public boolean isOverdue(){
+        LocalDate today = LocalDate.now();
+        LocalDate borrowDate = getBorrowDate();
+        LocalDate dueDate = borrowDate.plus(30, ChronoUnit.DAYS);
+
+        return today.isAfter(dueDate)
     }
 
     public static int countMemberLoans(int memberId){
