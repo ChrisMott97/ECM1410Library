@@ -2,6 +2,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class Book {
     private int id;
@@ -120,7 +121,7 @@ public class Book {
         return null;
     }
 
-    public boolean addTo(){
+    public boolean add(){
         if(getId() == -1) {
             int newId = Library.books.get(Library.books.size() - 1).getId() + 1;
             setId(newId);
@@ -130,12 +131,11 @@ public class Book {
                 Library.books.add(this);
                 return true;
             }else{
-                System.out.println("Book title already exists!");
-                //TODO Add input to input
+                return Library.yesNoDecision("Book title already exists! Would you like to continue?");
             }
         }else{
             System.out.println("Book ID already exists!");
-            //TODO handle better
+            //TODO Change to exception
         }
         System.out.println();
         return false;
@@ -146,8 +146,6 @@ public class Book {
             this.numberCopies += qty;
             return true;
         }
-        System.out.println("Invalid quantity!");
-        System.out.println();
         return false;
     }
 }

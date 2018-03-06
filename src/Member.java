@@ -110,7 +110,7 @@ public class Member {
         return null;
     }
 
-    public boolean addTo(){
+    public boolean add(){
         if(getId() == -1) {
             int newId = Library.members.get(Library.members.size() - 1).getId() + 1;
             setId(newId);
