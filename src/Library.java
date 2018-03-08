@@ -256,7 +256,9 @@ public class Library {
                 }
 
             } else {
-                System.out.println("Return successful");
+                Library.bookLoans.remove(bookLoan);
+                bookLoan.write(bookLoansFileName);
+                System.out.println("Book successfully returned");
             }
         }else{
             System.out.println("This book hasn't been taken out, therefore cannot be returned!");
