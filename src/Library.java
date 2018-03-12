@@ -88,22 +88,6 @@ public class Library {
         return false;
     }
 
-    public void searchBook(){
-        Scanner in = new Scanner(System.in);
-        System.out.println("Search Book");
-
-        System.out.print("Query: ");
-        String query = in.nextLine();
-        System.out.println();
-
-        if(!searchBook(query)){
-            System.out.println("Please try again.");
-        }
-        if(yesNoDecision("Would you like to search again? ")){
-            searchBook();
-        }
-    }
-
     public boolean borrowBook(String book, String fName, String lName){
         List<Book> bookResults = Book.getBook(book);
         Member memberResult = Member.getMember(fName, lName);
@@ -151,27 +135,6 @@ public class Library {
             System.out.println("No books found!");
         }
         return false;
-    }
-
-    public void borrowBook(){
-        Scanner in = new Scanner(System.in);
-        System.out.println("Borrow Book");
-
-        System.out.print("Book Title: ");
-        String book = in.nextLine();
-        System.out.println();
-
-        System.out.print("Member Full Name: ");
-        String fName = in.next();
-        String lName = in.next();
-        System.out.println();
-
-        if(!borrowBook(book, fName, lName)){
-            System.out.println("Could not borrow book.");
-        }
-        if(yesNoDecision("Would you like to borrow another?")){
-            borrowBook();
-        }
     }
 
     public boolean searchMember(String fName, String lName){
@@ -223,22 +186,7 @@ public class Library {
         return false;
     }
 
-    public void searchMember(){
-        Scanner in = new Scanner(System.in);
-        System.out.println("Search Member");
-        System.out.print("Full Name: ");
-        String fName = in.nextLine();
-        String lName = in.nextLine();
-        System.out.println();
-        if(!searchMember(fName, lName)){
-            System.out.println("Could not complete search.");
-        }
-        if(yesNoDecision("Would you like to try again?")){
-            searchMember();
-        }
-    }
-
-    public void returnBook(int id) {
+    public boolean returnBook(int id) {
         BookLoan bookLoan = BookLoan.getBookLoanById(id);
 
         if (bookLoan != null) {
@@ -251,6 +199,7 @@ public class Library {
                     Library.bookLoans.remove(bookLoan);
                     bookLoan.write(bookLoansFileName);
                     System.out.println("Book successfully returned");
+                    return true;
                 }else{
                     System.out.println("Book cannot be returned until fine is paid");
                 }
@@ -259,11 +208,13 @@ public class Library {
                 Library.bookLoans.remove(bookLoan);
                 bookLoan.write(bookLoansFileName);
                 System.out.println("Book successfully returned");
+                return true;
             }
         }else{
             System.out.println("This book hasn't been taken out, therefore cannot be returned!");
         }
         System.out.println();
+        return false;
     }
 
     public void addNewBook(String title, String[] authors, int year, int qty){
@@ -348,6 +299,101 @@ public class Library {
             System.out.println();
         }
         return false;
+    }
+
+    public void searchBook(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Search Book");
+
+        System.out.print(" |Query: ");
+        String query = in.nextLine();
+        System.out.println();
+
+        if(!searchBook(query)){
+            System.out.println("Could not complete search.");
+        }
+        if(yesNoDecision("Would you like to search again? ")){
+            searchBook();
+        }
+    }
+
+    public void searchMember(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Search Member");
+
+        System.out.print(" |Full Name: ");
+        String fName = in.nextLine();
+        String lName = in.nextLine();
+        System.out.println();
+
+        if(!searchMember(fName, lName)){
+            System.out.println("Could not complete search.");
+        }
+        if(yesNoDecision("Would you like to search again?")){
+            searchMember();
+        }
+    }
+
+    public void borrowBook(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Borrow Book");
+
+        System.out.print(" |Book Title: ");
+        String book = in.nextLine();
+        System.out.println();
+
+        System.out.print(" |Member Full Name: ");
+        String fName = in.next();
+        String lName = in.next();
+        System.out.println();
+
+        if(!borrowBook(book, fName, lName)){
+            System.out.println("Could not borrow book.");
+        }
+        if(yesNoDecision("Would you like to borrow another?")){
+            borrowBook();
+        }
+    }
+
+    public void returnBook(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Return Book:");
+
+        System.out.print(" |Book Loan ID: ");
+        int query = in.nextInt();
+        System.out.println();
+
+        if(!returnBook(query)){
+            System.out.println("Could not return book.");
+        }
+        if(yesNoDecision("Would you like to return another? ")){
+            returnBook();
+        }
+    }
+
+    public void addNewBook(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("New Book");
+
+        System.out.print(" |Title: ");
+        String title = in.nextLine();
+        System.out.println();
+
+        System.out.print(" |Author (Separate multiple by comma): ");
+        String authorsString = in.nextLine();
+        String[] authors = authorsString.split(",");
+        for (String author : authors) {
+            author.trim();
+        }
+        System.out.println();
+
+        System.out.print(" |Year: ");
+        int year = in.nextInt();
+        System.out.println();
+
+        System.out.print(" |Quantity: ");
+        int qty = in.nextInt();
+        System.out.println();
     }
 
     public static boolean yesNoDecision(String message){
