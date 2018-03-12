@@ -8,6 +8,6 @@ public class Main {
         lib.showAllBooks();
         lib.showAllMembers();
 //        lib.showAllBookLoans();
-        lib.searchMember("Sarah", "Hoopern");
+        lib.changeQuantity();
     }
 }

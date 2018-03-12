@@ -1,5 +1,4 @@
 
-
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
@@ -26,41 +25,15 @@ public class Library {
     }
 
     public void showAllBooks(){
-        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
-        for (Book book : books) {
-            System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3s\n",
-                    book.getId(),
-                    book.getTitle(),
-                    Arrays.toString(book.getAuthor()),
-                    book.getYear(),
-                    book.getNumberCopies(),
-                    book.getAvailable()
-            );
-        }
+        displayBooks(books);
         System.out.println();
     }
     public void showAllMembers(){
-        System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
-        for (Member member : members) {
-            System.out.printf("%-7d %-12s %-12s %-15s\n",
-                    member.getId(),
-                    member.getFName(),
-                    member.getLName(),
-                    member.getDateJoin().toString()
-            );
-        }
+        displayMembers(members);
         System.out.println();
     }
     public void showAllBookLoans(){
-        System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
-        for (BookLoan bookLoan : bookLoans) {
-            System.out.printf("%-8d %-10d %-11d %-15s\n",
-                    bookLoan.getId(),
-                    bookLoan.getBookId(),
-                    bookLoan.getMemberId(),
-                    bookLoan.getBorrowDate().toString()
-            );
-        }
+        displayBookLoans(bookLoans);
         //TODO show full book and member info for each loan
         System.out.println();
     }
@@ -68,17 +41,7 @@ public class Library {
     public boolean searchBook(String query){
         List<Book> results = Book.getBook(query);
         if(!results.isEmpty()){
-            System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author", "Year", "Number of Copies", "Available");
-            for (Book book : results) {
-                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
-                        book.getId(),
-                        book.getTitle(),
-                        Arrays.toString(book.getAuthor()),
-                        book.getYear(),
-                        book.getNumberCopies(),
-                        book.getAvailable()
-                );
-            }
+            displayBooks(results);
             System.out.println();
             return true;
         }else{
@@ -101,14 +64,8 @@ public class Library {
             if (bookLoan.add()) {
                 BookLoan.write(bookLoansFileName);
 
-                System.out.println("Book successfully borrowed: ");
-                System.out.printf("%-8s %-10s %-11s %-15s\n", "ID", "Book ID", "Member ID", "Borrow Date");
-                System.out.printf("%-8d %-10d %-11d %-15s\n",
-                        bookLoan.getId(),
-                        bookLoan.getBookId(),
-                        bookLoan.getMemberId(),
-                        bookLoan.getBorrowDate()
-                );
+                displayBookLoan(bookLoan);
+
                 System.out.println();
                 return true;
             }
@@ -120,13 +77,9 @@ public class Library {
                     BookLoan.write(bookLoansFileName);
 
                     System.out.println("Book successfully borrowed: ");
-                    System.out.printf("%-8s %-10s %-11s %-15s\n", "ID", "Book ID", "Member ID", "Borrow Date");
-                    System.out.printf("%-8d %-10d %-11d %-15s\n",
-                            bookLoan.getId(),
-                            bookLoan.getBookId(),
-                            bookLoan.getMemberId(),
-                            bookLoan.getBorrowDate()
-                    );
+
+                    displayBookLoan(bookLoan);
+
                     System.out.println();
                     return true;
                 }
@@ -140,13 +93,7 @@ public class Library {
     public boolean searchMember(String fName, String lName){
         Member member = Member.getMember(fName, lName);
         if(member != null){
-            System.out.printf("%-7s %-30s %-35s %-8s\n","ID", "First Name", "Last Name", "Date Joined");
-            System.out.printf("%-7s %-30s %-35s %-8s\n",
-                    member.getId(),
-                    member.getFName(),
-                    member.getLName(),
-                    member.getDateJoin()
-            );
+            displayMember(member);
             List<Book> bookResults = new ArrayList<>();
             for (BookLoan bookLoan : bookLoans){
                 if (bookLoan.getMemberId() == member.getId()){
@@ -217,39 +164,34 @@ public class Library {
         return false;
     }
 
-    public void addNewBook(String title, String[] authors, int year, int qty){
+    public boolean addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
         if(book.add()){
             Book.write(booksFileName);
 
             System.out.println("Book successfully added to library: ");
-            System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
-            System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
-                book.getId(),
-                book.getTitle(),
-                Arrays.toString(book.getAuthor()),
-                book.getYear(),
-                book.getNumberCopies()
-            );
+
+            displayBook(book);
+
             System.out.println();
+            return true;
         }
+        return false;
     }
 
-    public void addNewMember(String fName, String lName, LocalDate date){
+    public boolean addNewMember(String fName, String lName, LocalDate date){
         Member member = new Member(fName, lName, date);
         if(member.add()){
             Member.write(membersFileName);
 
             System.out.println("Member successfully added: ");
-            System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
-            System.out.printf("%-7d %-12s %-12s %-15s\n",
-                    member.getId(),
-                    member.getFName(),
-                    member.getLName(),
-                    member.getDateJoin()
-            );
+
+            displayMember(member);
+
             System.out.println();
+            return true;
         }
+        return false;
     }
 
     public boolean changeQuantity(String query, int qty){
@@ -259,16 +201,7 @@ public class Library {
             if(book != null){
                 if(book.changeNumberCopies(qty)){
                     Book.write(booksFileName);
-                    System.out.println("Book quantity updated successfully!");
-                    System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
-                    System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
-                            book.getId(),
-                            book.getTitle(),
-                            Arrays.toString(book.getAuthor()),
-                            book.getYear(),
-                            book.getNumberCopies(),
-                            book.getAvailable()
-                    );
+                    displayBook(book);
                     System.out.println();
                     return true;
                 }else{
@@ -282,15 +215,7 @@ public class Library {
                 Book.write(booksFileName);
 
                 System.out.println("Book quantity updated successfully!");
-                System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
-                System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
-                        book.getId(),
-                        book.getTitle(),
-                        Arrays.toString(book.getAuthor()),
-                        book.getYear(),
-                        book.getNumberCopies(),
-                        book.getAvailable()
-                );
+                displayBook(book);
                 System.out.println();
                 return true;
             }
@@ -382,9 +307,11 @@ public class Library {
         System.out.print(" |Author (Separate multiple by comma): ");
         String authorsString = in.nextLine();
         String[] authors = authorsString.split(",");
+        List<String> newAuthors = new ArrayList<>();
         for (String author : authors) {
-            author.trim();
+            newAuthors.add(author.trim());
         }
+        authors = newAuthors.toArray(authors);
         System.out.println();
 
         System.out.print(" |Year: ");
@@ -394,6 +321,56 @@ public class Library {
         System.out.print(" |Quantity: ");
         int qty = in.nextInt();
         System.out.println();
+
+        if(!addNewBook(title, authors, year, qty)){
+            System.out.println("Could not add book.");
+        }
+        if(yesNoDecision("Would you like to add another? ")){
+            addNewBook();
+        }
+    }
+
+    public void addNewMember(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("New Member");
+
+        System.out.print(" |First Name: ");
+        String fName = in.nextLine();
+        System.out.println();
+
+        System.out.print(" |Last Name: ");
+        String lName = in.nextLine();
+        System.out.println();
+
+        LocalDate dateJoined = LocalDate.now();
+        System.out.printf(" |Date Joined: %s", dateJoined);
+
+        if(!addNewMember(fName, lName, dateJoined)){
+            System.out.println("Could not add member.");
+        }
+        if(yesNoDecision("Would you like to add another? ")) {
+            addNewMember();
+        }
+    }
+
+    public void changeQuantity(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Change Quantity");
+
+        System.out.print(" |Book Title: ");
+        String title = in.nextLine();
+        System.out.println();
+
+        System.out.print(" |Quantity Change: ");
+        int qty = in.nextInt();
+        System.out.println();
+
+        if(!changeQuantity(title, qty)){
+            System.out.println("Could not change quantity.");
+        }
+        if(yesNoDecision("Would you like to change another? ")) {
+            changeQuantity();
+        }
     }
 
     public static boolean yesNoDecision(String message){
@@ -412,5 +389,69 @@ public class Library {
                 return yesNoDecision(message);
 
         }
+    }
+
+    public void displayBook(Book book){
+        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
+        System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
+                book.getId(),
+                book.getTitle(),
+                Arrays.toString(book.getAuthor()),
+                book.getYear(),
+                book.getNumberCopies()
+        );
+    }
+    public void displayBooks(List<Book> books){
+        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
+        for (Book book : books) {
+            System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3s\n",
+                    book.getId(),
+                    book.getTitle(),
+                    Arrays.toString(book.getAuthor()),
+                    book.getYear(),
+                    book.getNumberCopies(),
+                    book.getAvailable()
+            );
+        }
+    }
+    public void displayMembers(List<Member> members){
+        System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
+        for (Member member : members) {
+            System.out.printf("%-7d %-12s %-12s %-15s\n",
+                    member.getId(),
+                    member.getFName(),
+                    member.getLName(),
+                    member.getDateJoin().toString()
+            );
+        }
+    }
+    public void displayMember(Member member){
+        System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
+        System.out.printf("%-7d %-12s %-12s %-15s\n",
+                member.getId(),
+                member.getFName(),
+                member.getLName(),
+                member.getDateJoin().toString()
+        );
+    }
+    public void displayBookLoans(List<BookLoan> bookLoans){
+        System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+        for (BookLoan bookLoan : bookLoans) {
+            System.out.printf("%-8d %-10d %-11d %-15s\n",
+                    bookLoan.getId(),
+                    bookLoan.getBookId(),
+                    bookLoan.getMemberId(),
+                    bookLoan.getBorrowDate().toString()
+            );
+        }
+    }
+    public void displayBookLoan(BookLoan bookLoan){
+        System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+        System.out.printf("%-8d %-10d %-11d %-15s\n",
+                bookLoan.getId(),
+                bookLoan.getBookId(),
+                bookLoan.getMemberId(),
+                bookLoan.getBorrowDate().toString()
+        );
     }
 }
