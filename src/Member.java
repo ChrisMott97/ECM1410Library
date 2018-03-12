@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Scanner;
 
 public class Member {
     private int id;
@@ -90,6 +92,45 @@ public class Member {
     public LocalDate getDateJoin(){
         return dateJoin;
     }
+    public static List<Member> getMembers(String fName, String lName){
+        fName = fName.toLowerCase();
+        lName = lName.toLowerCase();
+        List<Member> members = new ArrayList<>();
+        for (Member member: Library.members) {
+            if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
+                members.add(member);
+            }
+        }
+        return members;
+    }
+    public static Member multipleMembers(List<Member> members){
+        System.out.printf("%-7s %-30s %-35s %-8s\n", "ID", "First Name", "Last Name", "Date Joined");
+        for (Member member : members) {
+            System.out.printf("%-7s %-30s %-35s %-8s\n",
+                    member.getId(),
+                    member.getFName(),
+                    member.getLName(),
+                    member.getDateJoin()
+            );
+        }
+        System.out.printf("%d results found. Please enter ID of the one you want to change:", members.size());
+        System.out.println();
+        boolean found = false;
+        while(!found){
+            Scanner in = new Scanner(System.in);
+            String id = in.next();
+            Member member = Member.getMemberById(Integer.parseInt(id));
+            if(member != null){
+                return member;
+            }else{
+                if(!Library.yesNoDecision("Wrong ID, would you like to try again?")){
+                    found = true;
+                }
+            }
+            System.out.println();
+        }
+        return null;
+    }
     public static Member getMember(String fName, String lName){
         fName = fName.toLowerCase();
         lName = lName.toLowerCase();
@@ -116,7 +157,7 @@ public class Member {
             setId(newId);
         }
         if(getMemberById(getId()) == null){
-            if(getMember(getFName(), getLName()) == null){
+            if(getMembers(getFName(), getLName()) == null){
                 Library.members.add(this);
                 return true;
             }else{
