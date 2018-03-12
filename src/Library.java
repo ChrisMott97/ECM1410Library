@@ -1,7 +1,6 @@
 
 
 import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class Library {
@@ -138,9 +137,18 @@ public class Library {
     }
 
     public boolean searchMember(String fName, String lName){
-        Member member = Member.getMember(fName, lName);
+        List<Member> members = Member.getMembers(fName, lName);
+        Member member = null;
+        System.out.println(members.toString());
+
+        if (members.size() > 1) {
+            member = Member.multipleMembers(members);
+        } else {
+            member = members.get(0);
+        }
+
         if(member != null){
-            System.out.printf("%-7s %-30s %-35s %-8s\n","ID", "First Name", "Last Name", "Date Joined");
+            System.out.printf("%-7s %-30s %-35s %-8s\n", "ID", "First Name", "Last Name", "Date Joined");
             System.out.printf("%-7s %-30s %-35s %-8s\n",
                     member.getId(),
                     member.getFName(),
@@ -155,9 +163,9 @@ public class Library {
             }
             if(!bookResults.isEmpty()) {
                 int bookCount = 0;
-                System.out.printf("%7s\n","|");
-                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n","|","Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
-                for (Book book : bookResults){
+                System.out.printf("%7s\n", "|");
+                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
+                for (Book book : bookResults) {
                     bookCount++;
 
                     BookLoan loan = BookLoan.getBookLoan(book.getId(), member.getId());
@@ -176,10 +184,10 @@ public class Library {
 
                     );
                 }
-                System.out.printf("%7s\n","|");
+                System.out.printf("%7s\n", "|");
                 System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
-                return true;
             }
+            return true;
         }else{
             System.out.println("No member found");
         }
