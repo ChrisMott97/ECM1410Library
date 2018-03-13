@@ -13,16 +13,28 @@ public class BookLoanFactory {
     public MemberFactory memberFactory;
 
 
+    /**
+     * @param bookLoans
+     * @param bookFactory
+     * @param memberFactory
+     */
     public void setDependencies(List<BookLoan> bookLoans, BookFactory bookFactory, MemberFactory memberFactory){
         this.bookFactory = bookFactory;
         this.memberFactory = memberFactory;
         this.bookLoans = bookLoans;
     }
 
+    /**
+     * @return
+     */
     public List<BookLoan> getBookLoans() {
         return bookLoans;
     }
 
+    /**
+     * @param file
+     * @return
+     */
     public List<BookLoan> read(String file){
         BufferedReader br;
         String line;
@@ -56,6 +68,10 @@ public class BookLoanFactory {
 
         return bookLoans;
     }
+
+    /**
+     * @param file
+     */
     public void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
@@ -73,6 +89,10 @@ public class BookLoanFactory {
         }
     }
 
+    /**
+     * @param memberId
+     * @return
+     */
     public int countMemberLoans(int memberId){
         int count = 0;
         for (BookLoan bookLoan : bookLoans) {
@@ -82,6 +102,11 @@ public class BookLoanFactory {
         }
         return count;
     }
+
+    /**
+     * @param id
+     * @return
+     */
     public BookLoan getBookLoanById(int id) {
         for (BookLoan bookLoan: bookLoans) {
             if (bookLoan.getId() == id) {
@@ -90,6 +115,11 @@ public class BookLoanFactory {
         }
         return null;
     }
+
+    /**
+     * @param bookId
+     * @return
+     */
     public List<BookLoan> getByBookId(int bookId){
         List<BookLoan> results = new ArrayList<>();
 
@@ -101,6 +131,12 @@ public class BookLoanFactory {
 
         return results;
     }
+
+    /**
+     * @param bookId
+     * @param loans
+     * @return
+     */
     public List<BookLoan> getByBookId(int bookId, List<BookLoan> loans){
         List<BookLoan> results = new ArrayList<>();
 
@@ -112,6 +148,11 @@ public class BookLoanFactory {
 
         return results;
     }
+
+    /**
+     * @param memberId
+     * @return
+     */
     public List<BookLoan> getByMemberId(int memberId){
         List<BookLoan> results = new ArrayList<>();
 
@@ -123,6 +164,12 @@ public class BookLoanFactory {
 
         return results;
     }
+
+    /**
+     * @param bookId
+     * @param memberId
+     * @return
+     */
     public BookLoan getBookLoan(int bookId, int memberId) {
         List<BookLoan> loans = getByMemberId(memberId);
         if (!loans.isEmpty()) {
@@ -134,6 +181,10 @@ public class BookLoanFactory {
         return null;
     }
 
+    /**
+     * @param bookLoan
+     * @return
+     */
     public boolean add(BookLoan bookLoan){
         if(bookLoan.getId() == -1) {
             int bookLoanCount = bookLoans.size();

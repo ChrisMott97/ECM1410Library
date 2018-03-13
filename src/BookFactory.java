@@ -15,16 +15,29 @@ public class BookFactory {
     public BookLoanFactory bookLoanFactory;
 
 
+    /**
+     * @param books
+     * @param memberFactory
+     * @param bookLoanFactory
+     */
     public void setDependencies(List<Book> books, MemberFactory memberFactory, BookLoanFactory bookLoanFactory){
+
         this.books = books;
         this.memberFactory = memberFactory;
         this.bookLoanFactory = bookLoanFactory;
     }
 
+    /**
+     * @return
+     */
     public List<Book> getBooks() {
         return books;
     }
 
+    /**
+     * @param file
+     * @return
+     */
     public List<Book> read(String file){
         BufferedReader br;
         String line;
@@ -59,6 +72,10 @@ public class BookFactory {
 
         return books;
     }
+
+    /**
+     * @param file
+     */
     public void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
@@ -78,6 +95,10 @@ public class BookFactory {
         }
     }
 
+    /**
+     * @param query
+     * @return
+     */
     public List<Book> getBook(String query){
         query = query.toLowerCase();
         List<Book> search = new ArrayList<>();
@@ -88,6 +109,11 @@ public class BookFactory {
         }
         return search;
     }
+
+    /**
+     * @param id
+     * @return
+     */
     public Book getBookById(int id){
         for (Book book: books) {
             if (book.getId() == id) {
@@ -96,6 +122,11 @@ public class BookFactory {
         }
         return null;
     }
+
+    /**
+     * @param books
+     * @return
+     */
     public Book multipleBooks(List<Book> books){
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
         for (Book book : books) {
@@ -127,6 +158,10 @@ public class BookFactory {
         return null;
     }
 
+    /**
+     * @param book
+     * @return
+     */
     public boolean add(Book book){
         if(book.getId() == -1) {
             int newId = books.get(books.size() - 1).getId() + 1;

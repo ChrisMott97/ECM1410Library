@@ -14,16 +14,28 @@ public class MemberFactory {
     public BookLoanFactory bookLoanFactory;
 
 
+    /**
+     * @param members
+     * @param bookFactory
+     * @param bookLoanFactory
+     */
     public void setDependencies(List<Member> members, BookFactory bookFactory, BookLoanFactory bookLoanFactory){
         this.bookFactory = bookFactory;
         this.members = members;
         this.bookLoanFactory = bookLoanFactory;
     }
 
+    /**
+     * @return
+     */
     public List<Member> getMembers() {
         return members;
     }
 
+    /**
+     * @param file
+     * @return
+     */
     public List<Member> read(String file){
         BufferedReader br;
         String line;
@@ -57,6 +69,10 @@ public class MemberFactory {
 
         return members;
     }
+
+    /**
+     * @param file
+     */
     public void write(String file){
         try {
             PrintWriter writer = new PrintWriter(file, "UTF-8");
@@ -74,6 +90,11 @@ public class MemberFactory {
         }
     }
 
+    /**
+     * @param fName
+     * @param lName
+     * @return
+     */
     public List<Member> getMembers(String fName, String lName){
         fName = fName.toLowerCase();
         lName = lName.toLowerCase();
@@ -85,6 +106,11 @@ public class MemberFactory {
         }
         return members;
     }
+
+    /**
+     * @param members
+     * @return
+     */
     public Member multipleMembers(List<Member> members){
         System.out.printf("%-7s %-30s %-35s %-8s\n", "ID", "First Name", "Last Name", "Date Joined");
         for (Member member : members) {
@@ -113,6 +139,12 @@ public class MemberFactory {
         }
         return null;
     }
+
+    /**
+     * @param fName
+     * @param lName
+     * @return
+     */
     public Member getMember(String fName, String lName){
         fName = fName.toLowerCase();
         lName = lName.toLowerCase();
@@ -123,6 +155,11 @@ public class MemberFactory {
         }
         return null;
     }
+
+    /**
+     * @param id
+     * @return
+     */
     public Member getMemberById(int id){
         for (Member member : members) {
             if(member.getId() == id){
@@ -131,6 +168,11 @@ public class MemberFactory {
         }
         return null;
     }
+
+    /**
+     * @param member
+     * @return
+     */
     public boolean add(Member member){
         if(member.getId() == -1) {
             int newId = members.get(members.size() - 1).getId() + 1;

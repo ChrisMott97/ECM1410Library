@@ -8,6 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ *
+ */
 public class Member {
     private MemberFactory memberFactory;
     private int id;
@@ -15,6 +18,12 @@ public class Member {
     private String lName;
     private LocalDate dateJoin;
 
+    /**
+     * @param id
+     * @param fName
+     * @param lName
+     * @param dateJoin
+     */
     public Member(int id, String fName, String lName, LocalDate dateJoin){
         this.id = id;
         this.fName = fName;
@@ -22,6 +31,11 @@ public class Member {
         this.dateJoin = dateJoin;
     }
 
+    /**
+     * @param fName
+     * @param lName
+     * @param dateJoin
+     */
     public Member(String fName, String lName, LocalDate dateJoin){
         this.id = -1;
         this.fName = fName;
@@ -29,22 +43,44 @@ public class Member {
         this.dateJoin = dateJoin;
     }
 
+    /**
+     * @param memberFactory
+     */
     public void setDependencies(MemberFactory memberFactory){
         this.memberFactory = memberFactory;
     }
-    //getters
+
+    /**
+     * @return
+     */
     public int getId(){
         return id;
     }
+
+    /**
+     * @param id
+     */
     public void setId(int id) {
         this.id = id;
     }
+
+    /**
+     * @return
+     */
     public String getFName(){
         return fName;
     }
+
+    /**
+     * @return
+     */
     public String getLName(){
         return lName;
     }
+
+    /**
+     * @return
+     */
     public LocalDate getDateJoin(){
         return dateJoin;
     }

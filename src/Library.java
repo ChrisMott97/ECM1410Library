@@ -2,10 +2,16 @@
 import java.time.LocalDate;
 import java.util.*;
 
+/**
+ * Library management system that maintains books, members, and bookloans.
+ *
+ * @author Chris Mott
+ * @author Örs Barkanyi
+ */
 public class Library {
 
     List<Book> books;
-    List<Member>  members;
+    List<Member> members;
     List<BookLoan> bookLoans;
 
     String booksFileName;
@@ -16,6 +22,13 @@ public class Library {
     MemberFactory memberFactory;
     BookLoanFactory bookLoanFactory;
 
+    /**
+     * Constructor for Library that sets up file
+     *
+     * @param booksFileName
+     * @param membersFileName
+     * @param bookLoansFileName
+     */
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
 
         this.booksFileName = booksFileName;
@@ -36,39 +49,64 @@ public class Library {
 
     }
 
+    /**
+     *
+     */
     public void showAllBooks(){
         displayBooks(books);
         System.out.println();
     }
+
+    /**
+     *
+     */
     public void showAllMembers(){
         displayMembers(members);
         System.out.println();
     }
+
+    /**
+     *
+     */
     public void showAllBookLoans(){
         displayBookLoans(bookLoans);
         //TODO show full book and member info for each loan
         System.out.println();
     }
 
+    /**
+     * @param query
+     * @return
+     */
     public boolean searchBook(String query){
         List<Book> results = bookFactory.getBook(query);
+
         if(!results.isEmpty()){
             displayBooks(results);
             System.out.println();
+
             return true;
         }else{
             System.out.println("No books found.");
         }
         System.out.println();
+
         return false;
     }
 
+    /**
+     * @param book
+     * @param fName
+     * @param lName
+     * @return
+     */
     public boolean borrowBook(String book, String fName, String lName){
         List<Book> bookResults = bookFactory.getBook(book);
         Member memberResult = memberFactory.getMember(fName, lName);
 
         if(memberResult == null) {
             System.out.println("Member does not exist.");
+
             return false;
         }
         if(bookResults.size() == 1){
@@ -76,38 +114,40 @@ public class Library {
             bookLoan.setDependencies(bookLoanFactory);
 
             if (bookLoanFactory.add(bookLoan)) {
-                bookLoanFactory.write(bookLoansFileName);
-
                 displayBookLoan(bookLoan);
-
                 System.out.println();
+
                 return true;
             }
         }else if(bookResults.size() > 1){
             Book bookResult = bookFactory.multipleBooks(bookResults);
+
             if(bookResult != null){
                 BookLoan bookLoan = new BookLoan(bookResult.getId(), memberResult.getId(), LocalDate.now());
+
                 if (bookLoanFactory.add(bookLoan)) {
-                    bookLoanFactory.write(bookLoansFileName);
-
                     System.out.println("Book successfully borrowed: ");
-
                     displayBookLoan(bookLoan);
-
                     System.out.println();
+
                     return true;
                 }
             }
         }else{
             System.out.println("No books found!");
         }
+
         return false;
     }
 
+    /**
+     * @param fName
+     * @param lName
+     * @return
+     */
     public boolean searchMember(String fName, String lName){
         List<Member> members = memberFactory.getMembers(fName, lName);
         Member member = null;
-        System.out.println(members.toString());
 
         if (members.size() > 1) {
             member = memberFactory.multipleMembers(members);
@@ -118,20 +158,21 @@ public class Library {
         if(member != null){
             displayMember(member);
             List<Book> bookResults = new ArrayList<>();
+
             for (BookLoan bookLoan : bookLoans){
                 if (bookLoan.getMemberId() == member.getId()){
                    bookResults.add(bookFactory.getBookById(bookLoan.getBookId()));
                 }
             }
+
             if(!bookResults.isEmpty()) {
                 int bookCount = 0;
+
                 System.out.printf("%7s\n", "|");
                 System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
                 for (Book book : bookResults) {
                     bookCount++;
-
                     BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
-
                     String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
                     System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
@@ -149,13 +190,19 @@ public class Library {
                 System.out.printf("%7s\n", "|");
                 System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
             }
+
             return true;
         }else{
             System.out.println("No member found");
         }
+
         return false;
     }
 
+    /**
+     * @param id
+     * @return
+     */
     public boolean returnBook(int id) {
         BookLoan bookLoan = bookLoanFactory.getBookLoanById(id);
 
@@ -167,9 +214,8 @@ public class Library {
 
                 if(yesNoDecision("Is the fine paid? ")){
                     bookLoans.remove(bookLoan);
-                    bookLoanFactory.write(bookLoansFileName);
-
                     System.out.println("Book successfully returned");
+
                     return true;
                 }else{
                     System.out.println("Book cannot be returned until fine is paid");
@@ -177,52 +223,66 @@ public class Library {
 
             } else {
                 bookLoans.remove(bookLoan);
-                bookLoanFactory.write(bookLoansFileName);
-
                 System.out.println("Book successfully returned");
+
                 return true;
             }
         }else{
             System.out.println("This book hasn't been taken out, therefore cannot be returned!");
         }
         System.out.println();
+
         return false;
     }
 
+    /**
+     * @param title
+     * @param authors
+     * @param year
+     * @param qty
+     * @return
+     */
     public boolean addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
         book.setDependencies(bookFactory);
 
         if(bookFactory.add(book)){
-            bookFactory.write(booksFileName);
-
             System.out.println("Book successfully added to library: ");
-
             displayBook(book);
-
             System.out.println();
+
             return true;
         }
+
         return false;
     }
 
+    /**
+     * @param fName
+     * @param lName
+     * @param date
+     * @return
+     */
     public boolean addNewMember(String fName, String lName, LocalDate date){
         Member member = new Member(fName, lName, date);
         member.setDependencies(memberFactory);
 
         if(memberFactory.add(member)){
-            memberFactory.write(membersFileName);
-
             System.out.println("Member successfully added: ");
-
             displayMember(member);
-
             System.out.println();
+
             return true;
         }
+
         return false;
     }
 
+    /**
+     * @param query
+     * @param qty
+     * @return
+     */
     public boolean changeQuantity(String query, int qty){
         List<Book> results = bookFactory.getBook(query);
 
@@ -231,8 +291,6 @@ public class Library {
 
             if(book != null){
                 if(book.changeNumberCopies(qty)){
-
-                    bookFactory.write(booksFileName);
                     displayBook(book);
                     System.out.println();
 
@@ -245,8 +303,6 @@ public class Library {
         }else if(results.size() == 1){
             Book book = results.get(0);
             if(book.changeNumberCopies(qty)){
-                bookFactory.write(booksFileName);
-
                 System.out.println("Book quantity updated successfully!");
                 displayBook(book);
                 System.out.println();
@@ -257,9 +313,13 @@ public class Library {
             System.out.println("No books found.");
             System.out.println();
         }
+
         return false;
     }
 
+    /**
+     *
+     */
     public void searchBook(){
         Scanner in = new Scanner(System.in);
         System.out.println("Search Book");
@@ -276,6 +336,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void searchMember(){
         Scanner in = new Scanner(System.in);
         System.out.println("Search Member");
@@ -293,6 +356,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void borrowBook(){
         Scanner in = new Scanner(System.in);
         System.out.println("Borrow Book");
@@ -314,6 +380,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void returnBook(){
         Scanner in = new Scanner(System.in);
         System.out.println("Return Book:");
@@ -330,6 +399,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void addNewBook(){
         Scanner in = new Scanner(System.in);
         System.out.println("New Book");
@@ -364,6 +436,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void addNewMember(){
         Scanner in = new Scanner(System.in);
         System.out.println("New Member");
@@ -387,6 +462,9 @@ public class Library {
         }
     }
 
+    /**
+     *
+     */
     public void changeQuantity(){
         Scanner in = new Scanner(System.in);
         System.out.println("Change Quantity");
@@ -407,12 +485,21 @@ public class Library {
         }
     }
 
+    /**
+     * @param booksFileName
+     * @param membersFileName
+     * @param bookLoansFileName
+     */
     public void saveChanges(String booksFileName, String membersFileName, String bookLoansFileName){
         bookFactory.write(booksFileName);
         memberFactory.write(membersFileName);
         bookLoanFactory.write(bookLoansFileName);
     }
 
+    /**
+     * @param message
+     * @return
+     */
     public static boolean yesNoDecision(String message){
         System.out.println(message + "y/n");
         Scanner in = new Scanner(System.in);
@@ -431,6 +518,9 @@ public class Library {
         }
     }
 
+    /**
+     * @param book
+     */
     public void displayBook(Book book){
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
         System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
@@ -441,6 +531,10 @@ public class Library {
                 book.getNumberCopies()
         );
     }
+
+    /**
+     * @param books
+     */
     public void displayBooks(List<Book> books){
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
         for (Book book : books) {
@@ -454,6 +548,10 @@ public class Library {
             );
         }
     }
+
+    /**
+     * @param members
+     */
     public void displayMembers(List<Member> members){
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
         for (Member member : members) {
@@ -465,6 +563,10 @@ public class Library {
             );
         }
     }
+
+    /**
+     * @param member
+     */
     public void displayMember(Member member){
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
         System.out.printf("%-7d %-12s %-12s %-15s\n",
@@ -474,6 +576,10 @@ public class Library {
                 member.getDateJoin().toString()
         );
     }
+
+    /**
+     * @param bookLoans
+     */
     public void displayBookLoans(List<BookLoan> bookLoans){
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
         for (BookLoan bookLoan : bookLoans) {
@@ -485,6 +591,10 @@ public class Library {
             );
         }
     }
+
+    /**
+     * @param bookLoan
+     */
     public void displayBookLoan(BookLoan bookLoan){
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
         System.out.printf("%-8d %-10d %-11d %-15s\n",
