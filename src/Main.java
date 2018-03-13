@@ -7,7 +7,8 @@ public class Main {
 
 //        lib.showAllBooks();
 //        lib.showAllMembers();
-//        lib.showAllBookLoans();
-        lib.changeQuantity();
+        lib.showAllBookLoans();
+//        lib.changeQuantity();
+        lib.returnBook();
     }
 }

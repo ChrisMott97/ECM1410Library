@@ -4,23 +4,36 @@ import java.util.*;
 
 public class Library {
 
-    static List<Book> books;
-    static List<Member>  members;
-    static List<BookLoan> bookLoans;
+    List<Book> books;
+    List<Member>  members;
+    List<BookLoan> bookLoans;
 
     String booksFileName;
     String membersFileName;
     String bookLoansFileName;
 
+    BookFactory bookFactory;
+    MemberFactory memberFactory;
+    BookLoanFactory bookLoanFactory;
+
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
-        books = Book.read(booksFileName);
+
         this.booksFileName = booksFileName;
-
-        members = Member.read(membersFileName);
         this.membersFileName = membersFileName;
-
-        bookLoans = BookLoan.read(bookLoansFileName);
         this.bookLoansFileName = bookLoansFileName;
+
+        bookFactory = new BookFactory();
+        memberFactory = new MemberFactory();
+        bookLoanFactory = new BookLoanFactory();
+
+        books = bookFactory.read(booksFileName);
+        members = memberFactory.read(membersFileName);
+        bookLoans = bookLoanFactory.read(bookLoansFileName);
+
+        bookFactory.setDependencies(books, memberFactory, bookLoanFactory);
+        memberFactory.setDependencies(members, bookFactory, bookLoanFactory);
+        bookLoanFactory.setDependencies(bookLoans, bookFactory, memberFactory);
+
     }
 
     public void showAllBooks(){
@@ -38,7 +51,7 @@ public class Library {
     }
 
     public boolean searchBook(String query){
-        List<Book> results = Book.getBook(query);
+        List<Book> results = bookFactory.getBook(query);
         if(!results.isEmpty()){
             displayBooks(results);
             System.out.println();
@@ -51,8 +64,8 @@ public class Library {
     }
 
     public boolean borrowBook(String book, String fName, String lName){
-        List<Book> bookResults = Book.getBook(book);
-        Member memberResult = Member.getMember(fName, lName);
+        List<Book> bookResults = bookFactory.getBook(book);
+        Member memberResult = memberFactory.getMember(fName, lName);
 
         if(memberResult == null) {
             System.out.println("Member does not exist.");
@@ -60,8 +73,10 @@ public class Library {
         }
         if(bookResults.size() == 1){
             BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResult.getId(), LocalDate.now());
-            if (bookLoan.add()) {
-                BookLoan.write(bookLoansFileName);
+            bookLoan.setDependencies(bookLoanFactory);
+
+            if (bookLoanFactory.add(bookLoan)) {
+                bookLoanFactory.write(bookLoansFileName);
 
                 displayBookLoan(bookLoan);
 
@@ -69,11 +84,11 @@ public class Library {
                 return true;
             }
         }else if(bookResults.size() > 1){
-            Book bookResult = Book.multipleBooks(bookResults);
+            Book bookResult = bookFactory.multipleBooks(bookResults);
             if(bookResult != null){
                 BookLoan bookLoan = new BookLoan(bookResult.getId(), memberResult.getId(), LocalDate.now());
-                if (bookLoan.add()) {
-                    BookLoan.write(bookLoansFileName);
+                if (bookLoanFactory.add(bookLoan)) {
+                    bookLoanFactory.write(bookLoansFileName);
 
                     System.out.println("Book successfully borrowed: ");
 
@@ -90,12 +105,12 @@ public class Library {
     }
 
     public boolean searchMember(String fName, String lName){
-        List<Member> members = Member.getMembers(fName, lName);
+        List<Member> members = memberFactory.getMembers(fName, lName);
         Member member = null;
         System.out.println(members.toString());
 
         if (members.size() > 1) {
-            member = Member.multipleMembers(members);
+            member = memberFactory.multipleMembers(members);
         } else {
             member = members.get(0);
         }
@@ -105,7 +120,7 @@ public class Library {
             List<Book> bookResults = new ArrayList<>();
             for (BookLoan bookLoan : bookLoans){
                 if (bookLoan.getMemberId() == member.getId()){
-                   bookResults.add(Book.getBookById(bookLoan.getBookId()));
+                   bookResults.add(bookFactory.getBookById(bookLoan.getBookId()));
                 }
             }
             if(!bookResults.isEmpty()) {
@@ -115,7 +130,7 @@ public class Library {
                 for (Book book : bookResults) {
                     bookCount++;
 
-                    BookLoan loan = BookLoan.getBookLoan(book.getId(), member.getId());
+                    BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
 
                     String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
@@ -142,7 +157,7 @@ public class Library {
     }
 
     public boolean returnBook(int id) {
-        BookLoan bookLoan = BookLoan.getBookLoanById(id);
+        BookLoan bookLoan = bookLoanFactory.getBookLoanById(id);
 
         if (bookLoan != null) {
 
@@ -151,8 +166,9 @@ public class Library {
                 System.out.printf("OVERDUE! Fine: £%.2f\n", bookLoan.getFine());
 
                 if(yesNoDecision("Is the fine paid? ")){
-                    Library.bookLoans.remove(bookLoan);
-                    bookLoan.write(bookLoansFileName);
+                    bookLoans.remove(bookLoan);
+                    bookLoanFactory.write(bookLoansFileName);
+
                     System.out.println("Book successfully returned");
                     return true;
                 }else{
@@ -160,8 +176,9 @@ public class Library {
                 }
 
             } else {
-                Library.bookLoans.remove(bookLoan);
-                bookLoan.write(bookLoansFileName);
+                bookLoans.remove(bookLoan);
+                bookLoanFactory.write(bookLoansFileName);
+
                 System.out.println("Book successfully returned");
                 return true;
             }
@@ -174,8 +191,10 @@ public class Library {
 
     public boolean addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
-        if(book.add()){
-            Book.write(booksFileName);
+        book.setDependencies(bookFactory);
+
+        if(bookFactory.add(book)){
+            bookFactory.write(booksFileName);
 
             System.out.println("Book successfully added to library: ");
 
@@ -189,8 +208,10 @@ public class Library {
 
     public boolean addNewMember(String fName, String lName, LocalDate date){
         Member member = new Member(fName, lName, date);
-        if(member.add()){
-            Member.write(membersFileName);
+        member.setDependencies(memberFactory);
+
+        if(memberFactory.add(member)){
+            memberFactory.write(membersFileName);
 
             System.out.println("Member successfully added: ");
 
@@ -203,14 +224,18 @@ public class Library {
     }
 
     public boolean changeQuantity(String query, int qty){
-        List<Book> results = Book.getBook(query);
+        List<Book> results = bookFactory.getBook(query);
+
         if(results.size() > 1) {
-            Book book = Book.multipleBooks(results);
+            Book book = bookFactory.multipleBooks(results);
+
             if(book != null){
                 if(book.changeNumberCopies(qty)){
-                    Book.write(booksFileName);
+
+                    bookFactory.write(booksFileName);
                     displayBook(book);
                     System.out.println();
+
                     return true;
                 }else{
                     System.out.println("Quantity invalid.");
@@ -220,11 +245,12 @@ public class Library {
         }else if(results.size() == 1){
             Book book = results.get(0);
             if(book.changeNumberCopies(qty)){
-                Book.write(booksFileName);
+                bookFactory.write(booksFileName);
 
                 System.out.println("Book quantity updated successfully!");
                 displayBook(book);
                 System.out.println();
+
                 return true;
             }
         }else{
@@ -379,6 +405,12 @@ public class Library {
         if(yesNoDecision("Would you like to change another? ")) {
             changeQuantity();
         }
+    }
+
+    public void saveChanges(String booksFileName, String membersFileName, String bookLoansFileName){
+        bookFactory.write(booksFileName);
+        memberFactory.write(membersFileName);
+        bookLoanFactory.write(bookLoansFileName);
     }
 
     public static boolean yesNoDecision(String message){
