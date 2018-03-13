@@ -7,8 +7,9 @@ public class Main {
 
 //        lib.showAllBooks();
 //        lib.showAllMembers();
-        lib.showAllBookLoans();
+
 //        lib.changeQuantity();
-        lib.returnBook();
+        lib.borrowBook("da buuk", "ors", "barkanyi");
+        lib.addNewBook("der buuk", new String[]{"orts"}, 7, 5);
     }
 }

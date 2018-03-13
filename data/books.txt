@@ -1,10 +1,1 @@
-100001,Data Mining Handbook,Robert Nisbet,1976,19
-100002,Birth of a Theorem,Cedric Villani,1980,2
-100003,Data Scientists at Work,Sebastian Gutierrez,1999,3
-100004,OO Design Using Java,James Nino:Frederick Hosch,1988,3
-100005,Objects First with Java,David Barnes:Michael Kolling,2001,6
-100006,Physics & Philosophy,Werner Heisenberg,1978,4
-100007,Making Software,Andy Oram,1982,5
-100008,Da Buuk,Chris Mott,2018,1
-100009,Puush,Ors Barkanyi,2018,1
-100010,Death by coursework,Ors Barkanyi:Chris Mott,2018,9
+100000,ti,titties,7177135,8008135

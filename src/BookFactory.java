@@ -7,7 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class BookFactory {
+public class    BookFactory {
 
     private List<Book> books;
 
@@ -128,7 +128,9 @@ public class BookFactory {
     }
 
     public boolean add(Book book){
-        if(book.getId() == -1) {
+        if(books.size() == 0 && book.getId() == -1) {
+            book.setId(100000);
+        } else {
             int newId = books.get(books.size() - 1).getId() + 1;
             book.setId(newId);
         }
