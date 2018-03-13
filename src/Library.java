@@ -23,11 +23,12 @@ public class Library {
     BookLoanFactory bookLoanFactory;
 
     /**
-     * Constructor for Library that sets up file
+     * Constructor for Library that sets up filepath variables, local storage variables for all books, members and
+     *  loans, and factories.
      *
-     * @param booksFileName
-     * @param membersFileName
-     * @param bookLoansFileName
+     * @param booksFileName location of the .txt file that stores the books.
+     * @param membersFileName location of the .txt file that stores the members.
+     * @param bookLoansFileName location of the .txt file that stores the bookloans.
      */
     public Library(String booksFileName, String membersFileName, String bookLoansFileName){
 
@@ -50,7 +51,7 @@ public class Library {
     }
 
     /**
-     *
+     * Prints all books in a table.
      */
     public void showAllBooks(){
         displayBooks(books);
@@ -58,7 +59,7 @@ public class Library {
     }
 
     /**
-     *
+     * Prints all members in a table.
      */
     public void showAllMembers(){
         displayMembers(members);
@@ -66,7 +67,7 @@ public class Library {
     }
 
     /**
-     *
+     * Prints all book loans in a table.
      */
     public void showAllBookLoans(){
         displayBookLoans(bookLoans);
@@ -75,8 +76,10 @@ public class Library {
     }
 
     /**
-     * @param query
-     * @return
+     * Searches for a book based on its title and returns all full and partial matches.
+     *
+     * @param query the full or partial title of the book to search for.
+     * @return whether the search was successful or not.
      */
     public boolean searchBook(String query){
         List<Book> results = bookFactory.getBook(query);
@@ -95,42 +98,80 @@ public class Library {
     }
 
     /**
-     * @param book
-     * @param fName
-     * @param lName
+     * Used to allow a member to borrow a book.
+     *
+     * @param book the full or partial match for the book to be borrowed.
+     * @param fName the first name of the member that's borrowing.
+     * @param lName the last name of the member that's borrowing.
      * @return
      */
     public boolean borrowBook(String book, String fName, String lName){
         List<Book> bookResults = bookFactory.getBook(book);
-        Member memberResult = memberFactory.getMember(fName, lName);
+        List<Member> memberResults = memberFactory.getMembers(fName, lName);
 
-        if(memberResult == null) {
+        if(memberResults.isEmpty()) {
             System.out.println("Member does not exist.");
 
             return false;
         }
         if(bookResults.size() == 1){
-            BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResult.getId(), LocalDate.now());
-            bookLoan.setDependencies(bookLoanFactory);
+            if(memberResults.size() == 1){
+                BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
+                bookLoan.setDependencies(bookLoanFactory);
 
-            if (bookLoanFactory.add(bookLoan)) {
-                displayBookLoan(bookLoan);
-                System.out.println();
+                if (bookLoanFactory.add(bookLoan)) {
+                    System.out.println("Book Successfully Added!");
+                    displayBookLoan(bookLoan);
+                    System.out.println();
 
-                return true;
+                    return true;
+                }
+            }else{
+                Member memberResult = memberFactory.multipleMembers(memberResults);
+
+                if(memberResult != null){
+                    BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
+                    bookLoan.setDependencies(bookLoanFactory);
+
+                    if (bookLoanFactory.add(bookLoan)) {
+                        System.out.println("Book Successfully Added!");
+                        displayBookLoan(bookLoan);
+                        System.out.println();
+
+                        return true;
+                    }
+                }
             }
         }else if(bookResults.size() > 1){
             Book bookResult = bookFactory.multipleBooks(bookResults);
 
             if(bookResult != null){
-                BookLoan bookLoan = new BookLoan(bookResult.getId(), memberResult.getId(), LocalDate.now());
+                if(memberResults.size() == 1){
+                    BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
+                    bookLoan.setDependencies(bookLoanFactory);
 
-                if (bookLoanFactory.add(bookLoan)) {
-                    System.out.println("Book successfully borrowed: ");
-                    displayBookLoan(bookLoan);
-                    System.out.println();
+                    if (bookLoanFactory.add(bookLoan)) {
+                        System.out.println("Book Successfully Added!");
+                        displayBookLoan(bookLoan);
+                        System.out.println();
 
-                    return true;
+                        return true;
+                    }
+                }else{
+                    Member memberResult = memberFactory.multipleMembers(memberResults);
+
+                    if(memberResult != null){
+                        BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
+                        bookLoan.setDependencies(bookLoanFactory);
+
+                        if (bookLoanFactory.add(bookLoan)) {
+                            System.out.println("Book Successfully Added!");
+                            displayBookLoan(bookLoan);
+                            System.out.println();
+
+                            return true;
+                        }
+                    }
                 }
             }
         }else{
@@ -141,54 +182,51 @@ public class Library {
     }
 
     /**
-     * @param fName
-     * @param lName
-     * @return
+     * Searches for a member by first name and last name.
+     *
+     * @param fName the members first name.
+     * @param lName the members last name.
+     * @return whether the function was successful or not.
      */
     public boolean searchMember(String fName, String lName){
         List<Member> members = memberFactory.getMembers(fName, lName);
-        Member member = null;
 
-        if (members.size() > 1) {
-            member = memberFactory.multipleMembers(members);
-        } else {
-            member = members.get(0);
-        }
+        if(members.get(0) != null){
+            for (Member member : members) {
+                displayMember(member);
+                List<Book> bookResults = new ArrayList<>();
 
-        if(member != null){
-            displayMember(member);
-            List<Book> bookResults = new ArrayList<>();
-
-            for (BookLoan bookLoan : bookLoans){
-                if (bookLoan.getMemberId() == member.getId()){
-                   bookResults.add(bookFactory.getBookById(bookLoan.getBookId()));
+                for (BookLoan bookLoan : bookLoans){
+                    if (bookLoan.getMemberId() == member.getId()){
+                       bookResults.add(bookFactory.getBookById(bookLoan.getBookId()));
+                    }
                 }
-            }
 
-            if(!bookResults.isEmpty()) {
-                int bookCount = 0;
+                if(!bookResults.isEmpty()) {
+                    int bookCount = 0;
 
-                System.out.printf("%7s\n", "|");
-                System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
-                for (Book book : bookResults) {
-                    bookCount++;
-                    BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
-                    String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
+                    System.out.printf("%7s\n", "|");
+                    System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
+                    for (Book book : bookResults) {
+                        bookCount++;
+                        BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
+                        String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
-                    System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
-                            "|",
-                            book.getId(),
-                            book.getTitle(),
-                            Arrays.toString(book.getAuthor()),
-                            book.getYear(),
-                            loan.getBorrowDate().toString(),
-                            loan.getDueDate().toString(),
-                            warning
+                        System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
+                                "|",
+                                book.getId(),
+                                book.getTitle(),
+                                Arrays.toString(book.getAuthor()),
+                                book.getYear(),
+                                loan.getBorrowDate().toString(),
+                                loan.getDueDate().toString(),
+                                warning
 
-                    );
+                        );
+                    }
+                    System.out.printf("%7s\n", "|");
+                    System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
                 }
-                System.out.printf("%7s\n", "|");
-                System.out.printf("%7s Total books: %d\n\n", "|", bookCount);
             }
 
             return true;
@@ -200,8 +238,10 @@ public class Library {
     }
 
     /**
-     * @param id
-     * @return
+     * Returns a book and subsequently deletes a book loan with a given id.
+     *
+     * @param id the id of the book loan to be removed.
+     * @return boolean that dictates whether or not the function was successful.
      */
     public boolean returnBook(int id) {
         BookLoan bookLoan = bookLoanFactory.getBookLoanById(id);
@@ -236,11 +276,13 @@ public class Library {
     }
 
     /**
-     * @param title
-     * @param authors
-     * @param year
-     * @param qty
-     * @return
+     * Creates a new book with the given properties and adds it to the library.
+     *
+     * @param title the title of the new book.
+     * @param authors the authors of the new book.
+     * @param year the year the new book was released.
+     * @param qty the amount of books available to be taken out.
+     * @return boolean that dictates whether or not the function was successful.
      */
     public boolean addNewBook(String title, String[] authors, int year, int qty){
         Book book = new Book(title, authors, year, qty);
@@ -258,10 +300,12 @@ public class Library {
     }
 
     /**
-     * @param fName
-     * @param lName
-     * @param date
-     * @return
+     * Creates a new member with the given properties and adds them to the library.
+     *
+     * @param fName the first name of the member to be added.
+     * @param lName the last name of the member to be added.
+     * @param date the date the member was added.
+     * @return boolean that dictates whether or not the function was successful.
      */
     public boolean addNewMember(String fName, String lName, LocalDate date){
         Member member = new Member(fName, lName, date);
@@ -279,9 +323,12 @@ public class Library {
     }
 
     /**
-     * @param query
-     * @param qty
-     * @return
+     * Changes the quantity of a book that's found by a given search query.
+     * If multiple books are found then the user is asked to choose one by ID from the given list.
+     *
+     * @param query the string to be partially or fully matched.
+     * @param qty the quantity increased or decrease (negative value).
+     * @return boolean that dictates whether or not the function was successful.
      */
     public boolean changeQuantity(String query, int qty){
         List<Book> results = bookFactory.getBook(query);
@@ -318,7 +365,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #searchBook(String)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void searchBook(){
         Scanner in = new Scanner(System.in);
@@ -337,7 +385,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #searchMember(String, String)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void searchMember(){
         Scanner in = new Scanner(System.in);
@@ -357,7 +406,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #borrowBook(String, String, String)} )}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void borrowBook(){
         Scanner in = new Scanner(System.in);
@@ -381,7 +431,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #returnBook(int)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void returnBook(){
         Scanner in = new Scanner(System.in);
@@ -400,7 +451,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #addNewBook(String, String[], int, int)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void addNewBook(){
         Scanner in = new Scanner(System.in);
@@ -437,7 +489,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #addNewMember(String, String, LocalDate)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void addNewMember(){
         Scanner in = new Scanner(System.in);
@@ -463,7 +516,8 @@ public class Library {
     }
 
     /**
-     *
+     * The interactive version of {@link #changeQuantity(String, int)}
+     * Takes in input and parses it so it's in the form to be passed with the non-interactive version.
      */
     public void changeQuantity(){
         Scanner in = new Scanner(System.in);
@@ -486,9 +540,11 @@ public class Library {
     }
 
     /**
-     * @param booksFileName
-     * @param membersFileName
-     * @param bookLoansFileName
+     * Used to write all lists to their respective text files.
+     *
+     * @param booksFileName the file to write the books list to.
+     * @param membersFileName the file to write the members list to.
+     * @param bookLoansFileName the file to write the book loans list to.
      */
     public void saveChanges(String booksFileName, String membersFileName, String bookLoansFileName){
         bookFactory.write(booksFileName);
@@ -497,8 +553,12 @@ public class Library {
     }
 
     /**
-     * @param message
-     * @return
+     * Utility function that is used to question a user with a given message.
+     * The answer must always be a variant of yes/no, which respectively returns true or false.
+     * If invalid input then function gets called recursively until correct input.
+     *
+     * @param message the question to ask the user.
+     * @return boolean as to whether the user said yes or no.
      */
     public static boolean yesNoDecision(String message){
         System.out.println(message + "y/n");
@@ -519,7 +579,9 @@ public class Library {
     }
 
     /**
-     * @param book
+     * Utility function to format the output of a single book in a table.
+     *
+     * @param book the book object to format and output.
      */
     public void displayBook(Book book){
         System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
@@ -533,7 +595,9 @@ public class Library {
     }
 
     /**
-     * @param books
+     * Utility function to format the output of a list of books in a table.
+     *
+     * @param books the list of books to format and output.
      */
     public void displayBooks(List<Book> books){
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
@@ -550,7 +614,9 @@ public class Library {
     }
 
     /**
-     * @param members
+     * Utility function to format the output of a list of members in a table.
+     *
+     * @param members the list of members to format and output.
      */
     public void displayMembers(List<Member> members){
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
@@ -565,7 +631,9 @@ public class Library {
     }
 
     /**
-     * @param member
+     * Utility function to format the output of a single member in a table.
+     *
+     * @param member the member object to format and output.
      */
     public void displayMember(Member member){
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
@@ -578,7 +646,9 @@ public class Library {
     }
 
     /**
-     * @param bookLoans
+     * Utility function to format the output of a list of book loans in a table.
+     *
+     * @param bookLoans the list of book loans to format and output.
      */
     public void displayBookLoans(List<BookLoan> bookLoans){
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
@@ -593,7 +663,9 @@ public class Library {
     }
 
     /**
-     * @param bookLoan
+     * Utility function to format and out a single book loan object in a table.
+     *
+     * @param bookLoan the single book loan object to be formatted and outputted.
      */
     public void displayBookLoan(BookLoan bookLoan){
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");

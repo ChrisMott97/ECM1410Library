@@ -7,7 +7,11 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
-public class    BookFactory {
+/**
+ * Contains all functions involved in manipulating Book objects
+ * Includes reading and writing to the storage text file.
+ */
+public class BookFactory {
 
     private List<Book> books;
 
@@ -16,9 +20,14 @@ public class    BookFactory {
 
 
     /**
-     * @param books
-     * @param memberFactory
-     * @param bookLoanFactory
+     * Used to set dependencies required for the factory to run.
+     * Does things that can't be done upon construction due to the fact other factories have to be constructed first.
+     *
+     * @param books list of books to pass by reference to the factory so the functions can use it.
+     * @param memberFactory factory with functions mainly used to manipulate members but can be
+     *                      useful in other factories
+     * @param bookLoanFactory factory with functions mainly used to manipulate book loans but can be
+     *                        useful in other factories.
      */
     public void setDependencies(List<Book> books, MemberFactory memberFactory, BookLoanFactory bookLoanFactory){
 
@@ -28,15 +37,19 @@ public class    BookFactory {
     }
 
     /**
-     * @return
+     * Getter for books list.
+     *
+     * @return full list of books.
      */
     public List<Book> getBooks() {
         return books;
     }
 
     /**
-     * @param file
-     * @return
+     * Reads from the given file and creates a list of books to be accessible by the rest of the program.
+     *
+     * @param file the file path to the file that needs to be read.
+     * @return the new list of books created from the text file.
      */
     public List<Book> read(String file){
         BufferedReader br;
@@ -74,7 +87,9 @@ public class    BookFactory {
     }
 
     /**
-     * @param file
+     * Used to write the books list to the given text file.
+     *
+     * @param file the file to write to.
      */
     public void write(String file){
         try {
@@ -96,23 +111,28 @@ public class    BookFactory {
     }
 
     /**
-     * @param query
-     * @return
+     * Retrieves a set of books that the string query fully or partially matches (by title).
+     *
+     * @param query the string to fully or partially match to books.
+     * @return the results found.
      */
     public List<Book> getBook(String query){
         query = query.toLowerCase();
-        List<Book> search = new ArrayList<>();
+        List<Book> results = new ArrayList<>();
         for (Book book: books) {
             if (book.getTitle().toLowerCase().contains(query)) {
-                search.add(book);
+                results.add(book);
             }
         }
-        return search;
+        return results;
     }
 
     /**
-     * @param id
-     * @return
+     * Retrieves a single book by the given id.
+     * Returns null if no book found
+     *
+     * @param id the id of the book to find.
+     * @return the book with the id or null if no book exists with that id.
      */
     public Book getBookById(int id){
         for (Book book: books) {
@@ -124,8 +144,11 @@ public class    BookFactory {
     }
 
     /**
-     * @param books
-     * @return
+     * Queries the user as to which book they want to use if a search has returned multiple books.
+     * The user selects by ID.
+     *
+     * @param books the list of books to choose from.
+     * @return the book chosen or null if a non-existant ID is chosen.
      */
     public Book multipleBooks(List<Book> books){
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n", "ID", "Title", "Author", "Year", "Number of Copies", "Available");
@@ -159,8 +182,10 @@ public class    BookFactory {
     }
 
     /**
-     * @param book
-     * @return
+     * Adds a new book instance to the book list.
+     *
+     * @param book the book instance to add.
+     * @return boolean as to whether or not the function was successful.
      */
     public boolean add(Book book){
         if(books.size() == 0 && book.getId() == -1) {

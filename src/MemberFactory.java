@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+/**
+ * Contains all functions involved in manipulating Member objects.
+ * Includes reading and writing to the storage text file.
+ */
 public class MemberFactory {
     private List<Member> members;
 
@@ -15,9 +19,13 @@ public class MemberFactory {
 
 
     /**
-     * @param members
-     * @param bookFactory
-     * @param bookLoanFactory
+     * Used to set dependencies that the factory requires.
+     * Does things that can't be done upon construction due to the fact other factories have to be constructed first.
+     *
+     * @param members list of members to pass by reference to the factory so the functions can use it.
+     * @param bookFactory factory with functions mainly used to manipulate members but can be useful in other factories.
+     * @param bookLoanFactory factory with functions mainly used to manipulate members but can be useful in
+     *                        other factories.
      */
     public void setDependencies(List<Member> members, BookFactory bookFactory, BookLoanFactory bookLoanFactory){
         this.bookFactory = bookFactory;
@@ -26,15 +34,19 @@ public class MemberFactory {
     }
 
     /**
-     * @return
+     * Getter for members list.
+     *
+     * @return the full list of members.
      */
     public List<Member> getMembers() {
         return members;
     }
 
     /**
-     * @param file
-     * @return
+     * Reads from the given file and creates a list of members to be accessible by the rest of the program.
+     *
+     * @param file the file path to the file that needs to be read.
+     * @return the new list of members created from the text file.
      */
     public List<Member> read(String file){
         BufferedReader br;
@@ -71,7 +83,9 @@ public class MemberFactory {
     }
 
     /**
-     * @param file
+     * Used to write the members list to the given text file.
+     *
+     * @param file the file to write to.
      */
     public void write(String file){
         try {
@@ -91,9 +105,12 @@ public class MemberFactory {
     }
 
     /**
-     * @param fName
-     * @param lName
-     * @return
+     * Used to find members given a first and last name.
+     * Can return multiple if multiple people with the same name.
+     *
+     * @param fName first name of member to be found.
+     * @param lName last name of the member to found.
+     * @return the list of member(s) found.
      */
     public List<Member> getMembers(String fName, String lName){
         fName = fName.toLowerCase();
@@ -108,8 +125,11 @@ public class MemberFactory {
     }
 
     /**
-     * @param members
-     * @return
+     * Used if multiple members need to be reduced to a single member.
+     * User picks an ID to narrow the search.
+     *
+     * @param members the list of members to choose between.
+     * @return the member that's been chosen or null if none chosen.
      */
     public Member multipleMembers(List<Member> members){
         System.out.printf("%-7s %-30s %-35s %-8s\n", "ID", "First Name", "Last Name", "Date Joined");
@@ -141,24 +161,10 @@ public class MemberFactory {
     }
 
     /**
-     * @param fName
-     * @param lName
-     * @return
-     */
-    public Member getMember(String fName, String lName){
-        fName = fName.toLowerCase();
-        lName = lName.toLowerCase();
-        for (Member member: members) {
-            if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
-                return member;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * @param id
-     * @return
+     * Used to find a member by their ID
+     *
+     * @param id the id to find by.
+     * @return the member found or null if no member found.
      */
     public Member getMemberById(int id){
         for (Member member : members) {
@@ -170,8 +176,10 @@ public class MemberFactory {
     }
 
     /**
-     * @param member
-     * @return
+     * Adds a new instance of Member to the members list.
+     *
+     * @param member the member instance to add.
+     * @return boolean as to whether or not the function was successful.
      */
     public boolean add(Member member){
         if(members.size() == 0 && member.getId() == -1) {
