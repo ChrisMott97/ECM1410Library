@@ -174,12 +174,14 @@ public class MemberFactory {
      * @return
      */
     public boolean add(Member member){
-        if(member.getId() == -1) {
+        if(members.size() == 0 && member.getId() == -1) {
+            member.setId(200000);
+        } else {
             int newId = members.get(members.size() - 1).getId() + 1;
             member.setId(newId);
         }
         if(getMemberById(member.getId()) == null){
-            if(getMembers(member.getFName(), member.getLName()) == null){
+            if(getMembers(member.getFName(), member.getLName()).isEmpty()){
                 members.add(member);
                 return true;
             }else{

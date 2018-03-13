@@ -186,9 +186,9 @@ public class BookLoanFactory {
      * @return
      */
     public boolean add(BookLoan bookLoan){
-        if(bookLoan.getId() == -1) {
-            int bookLoanCount = bookLoans.size();
-
+        if(bookLoans.size() == 0 && bookLoan.getId() == -1) {
+            bookLoan.setId(300000);
+        } else {
             int newId = bookLoans.get(bookLoans.size() - 1).getId() + 1;
             bookLoan.setId(newId);
         }
