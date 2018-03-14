@@ -339,6 +339,7 @@ public class Library {
         List<Book> results = bookFactory.getBook(query);
 
         if(results.size() > 1) {
+            //If more than one result, narrow results with user input.
             Book book = bookFactory.multipleBooks(results);
 
             if(book != null){
@@ -510,14 +511,19 @@ public class Library {
         System.out.println();
 
         LocalDate dateJoined = LocalDate.now();
-        System.out.printf(" |Date Joined: %s \n\n", dateJoined);
 
-        if(!addNewMember(fName, lName, dateJoined)){
+        if(fName.isEmpty() || lName.isEmpty()){
             System.out.println("Could not add member.");
+        }else{
+
+            if(!addNewMember(fName, lName, dateJoined)) {
+                System.out.println("Could not add member.");
+            }
+            if(yesNoDecision("Would you like to add another? ")) {
+                addNewMember();
+            }
         }
-        if(yesNoDecision("Would you like to add another? ")) {
-            addNewMember();
-        }
+
     }
 
     /**

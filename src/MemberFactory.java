@@ -113,11 +113,10 @@ public class MemberFactory {
      * @return the list of member(s) found.
      */
     public List<Member> getMembers(String fName, String lName){
-        fName = fName.toLowerCase();
-        lName = lName.toLowerCase();
         List<Member> results = new ArrayList<>();
         for (Member member: members) {
-            if (member.getFName().toLowerCase().equalsIgnoreCase(fName) && member.getLName().toLowerCase().equalsIgnoreCase(lName)) {
+            if (member.getFName().equalsIgnoreCase(fName) &&
+                    member.getLName().equalsIgnoreCase(lName)) {
                 results.add(member);
             }
         }
