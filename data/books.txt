@@ -7,3 +7,5 @@
 100007,Making Software,Andy Oram,1982,5
 100008,Puush,Örs Barkanyi,2020,4
 100009,Buuk,Chris Mott:Hongping Cai,2040,7
+100010,Data Mining Handbook,Chris,20,3
+100011,,chris,10,10

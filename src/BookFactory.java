@@ -199,7 +199,11 @@ public class BookFactory {
                 books.add(book);
                 return true;
             }else{
-                return Library.yesNoDecision("Book title already exists! Would you like to continue?");
+                boolean go = Library.yesNoDecision("Book title already exists! Would you like to continue?");
+                if(go){
+                    books.add(book);
+                    return go;
+                }
             }
         }else{
             System.out.println("Book ID already exists!");

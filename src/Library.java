@@ -177,7 +177,7 @@ public class Library {
                 }
             }
         }else{
-            System.out.println("No books found!");
+            System.out.println("Error!");
         }
 
         return false;
@@ -344,6 +344,7 @@ public class Library {
 
             if(book != null){
                 if(book.changeNumberCopies(qty)){
+                    System.out.println("Book quantity updated successfully!");
                     displayBook(book);
                     System.out.println();
 
@@ -381,12 +382,15 @@ public class Library {
         System.out.print(" |Query: ");
         String query = in.nextLine();
         System.out.println();
-
-        if(!searchBook(query)){
-            System.out.println("Could not complete search.");
-        }
-        if(yesNoDecision("Would you like to search again? ")){
-            searchBook();
+        if(query.isEmpty()){
+            System.out.println("All fields are required!");
+        }else{
+            if(!searchBook(query)){
+                System.out.println("Could not complete search.");
+            }
+            if(yesNoDecision("Would you like to search again? ")){
+                searchBook();
+            }
         }
     }
 
@@ -403,11 +407,15 @@ public class Library {
         String lName = in.next();
         System.out.println();
 
-        if(!searchMember(fName, lName)){
-            System.out.println("Could not complete search.");
-        }
-        if(yesNoDecision("Would you like to search again?")){
-            searchMember();
+        if(fName.isEmpty() || lName.isEmpty()){
+            System.out.println("All fields are required!");
+        }else{
+            if(!searchMember(fName, lName)){
+                System.out.println("Could not complete search.");
+            }
+            if(yesNoDecision("Would you like to search again?")){
+                searchMember();
+            }
         }
     }
 
@@ -428,11 +436,15 @@ public class Library {
         String lName = in.next();
         System.out.println();
 
-        if(!borrowBook(book, fName, lName)){
-            System.out.println("Could not borrow book.");
-        }
-        if(yesNoDecision("Would you like to borrow another?")){
-            borrowBook();
+        if(book.isEmpty() || fName.isEmpty() || lName.isEmpty()){
+            System.out.println("All fields are requirement!");
+        }else{
+            if(!borrowBook(book, fName, lName)){
+                System.out.println("Could not borrow book.");
+            }
+            if(yesNoDecision("Would you like to borrow another?")){
+                borrowBook();
+            }
         }
     }
 
@@ -486,11 +498,15 @@ public class Library {
         int qty = in.nextInt();
         System.out.println();
 
-        if(!addNewBook(title, authors, year, qty)){
-            System.out.println("Could not add book.");
-        }
-        if(yesNoDecision("Would you like to add another? ")){
-            addNewBook();
+        if(title.isEmpty()){
+            System.out.println("All fields are required!");
+        }else{
+            if(!addNewBook(title, authors, year, qty)){
+                System.out.println("Could not add book.");
+            }
+            if(yesNoDecision("Would you like to add another? ")){
+                addNewBook();
+            }
         }
     }
 
@@ -513,7 +529,7 @@ public class Library {
         LocalDate dateJoined = LocalDate.now();
 
         if(fName.isEmpty() || lName.isEmpty()){
-            System.out.println("Could not add member.");
+            System.out.println("All fields are required!");
         }else{
 
             if(!addNewMember(fName, lName, dateJoined)) {
@@ -542,11 +558,15 @@ public class Library {
         int qty = in.nextInt();
         System.out.println();
 
-        if(!changeQuantity(title, qty)){
-            System.out.println("Could not change quantity.");
-        }
-        if(yesNoDecision("Would you like to change another? ")) {
-            changeQuantity();
+        if(title.isEmpty()){
+            System.out.println("All fields are required!");
+        }else{
+            if(!changeQuantity(title, qty)){
+                System.out.println("Could not change quantity.");
+            }
+            if(yesNoDecision("Would you like to change another? ")) {
+                changeQuantity();
+            }
         }
     }
 
@@ -576,6 +596,7 @@ public class Library {
         Scanner in = new Scanner(System.in);
         String userStringInput = in.nextLine();
         char userInput;
+
         if(!userStringInput.isEmpty()){
             userInput = userStringInput.charAt(0);
         }else{
@@ -601,7 +622,9 @@ public class Library {
      * @param book the book object to format and output.
      */
     public void displayBook(Book book){
+        //Table headings
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
+        //Table data
         System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
                 book.getId(),
                 book.getTitle(),
@@ -618,8 +641,10 @@ public class Library {
      * @param books the list of books to format and output.
      */
     public void displayBooks(List<Book> books){
+        //Table headings
         System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
         for (Book book : books) {
+            //Table data
             System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3s\n",
                     book.getId(),
                     book.getTitle(),
@@ -637,8 +662,10 @@ public class Library {
      * @param members the list of members to format and output.
      */
     public void displayMembers(List<Member> members){
+        //Table headings
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
         for (Member member : members) {
+            //Table data
             System.out.printf("%-7d %-12s %-12s %-15s\n",
                     member.getId(),
                     member.getFName(),
@@ -654,7 +681,9 @@ public class Library {
      * @param member the member object to format and output.
      */
     public void displayMember(Member member){
+        //Table headings
         System.out.printf("%-7s %-12s %-12s %-15s\n","ID", "First Name", "Last Name", "Date Joined");
+        //Table data
         System.out.printf("%-7d %-12s %-12s %-15s\n",
                 member.getId(),
                 member.getFName(),
@@ -669,7 +698,9 @@ public class Library {
      * @param bookLoans the list of book loans to format and output.
      */
     public void displayBookLoans(List<BookLoan> bookLoans){
+        //Table headings
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+        //Table data
         for (BookLoan bookLoan : bookLoans) {
             System.out.printf("%-8d %-10d %-11d %-15s\n",
                     bookLoan.getId(),
@@ -686,7 +717,9 @@ public class Library {
      * @param bookLoan the single book loan object to be formatted and outputted.
      */
     public void displayBookLoan(BookLoan bookLoan){
+        //Table headings
         System.out.printf("%-8s %-10s %-11s %-15s\n","ID", "Book ID", "Member ID", "Borrow Date");
+        //Table data
         System.out.printf("%-8d %-10d %-11d %-15s\n",
                 bookLoan.getId(),
                 bookLoan.getBookId(),
