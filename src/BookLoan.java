@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
+ * Stores all basic information about a single BookLoan.
  */
 public class BookLoan {
     private BookLoanFactory bookLoanFactory;
@@ -18,10 +18,12 @@ public class BookLoan {
     private LocalDate borrowDate;
 
     /**
-     * @param id
-     * @param bookId
-     * @param memberId
-     * @param borrowDate
+     * Constructs a new BookLoan with given parameters only if it's being read from a file (because the ID is known).
+     *
+     * @param id the id (primary key) of the bookloan.
+     * @param bookId  the id of the book that is being taken out.
+     * @param memberId the id of the member that owns the book loan.
+     * @param borrowDate the date that the book was taken out.
      */
     public BookLoan(int id, int bookId, int memberId, LocalDate borrowDate){
         this.id = id;
@@ -31,9 +33,12 @@ public class BookLoan {
     }
 
     /**
-     * @param bookId
-     * @param memberId
-     * @param borrowDate
+     * Constructs a new BookLoan with given parameters with id = -1 to ensure it gets assigned a proper id before
+     *  being added to the list.
+     *
+     * @param bookId the id of the book that is being taken out.
+     * @param memberId the id of the member that owns the book loan.
+     * @param borrowDate the date that the book was taken out.
      */
     public BookLoan(int bookId, int memberId, LocalDate borrowDate){
         this.id = -1;
@@ -43,6 +48,8 @@ public class BookLoan {
     }
 
     /**
+     * Sets the dependencies that some functions in the bookloan may require.
+     *
      * @param bookLoanFactory
      */
     public void setDependencies(BookLoanFactory bookLoanFactory){
@@ -51,47 +58,61 @@ public class BookLoan {
 
 
     /**
-     * @return
+     * Getter for borrow date.
+     *
+     * @return LocalDate borrowed date.
      */
     public LocalDate getBorrowDate() {
         return borrowDate;
     }
 
     /**
-     * @return
+     * Getter for id.
+     *
+     * @return int id.
      */
     public int getId() {
         return id;
     }
 
     /**
-     * @param id
+     * Setter for id.
+     *
+     * @param id the id to set the bookloan id to.
      */
     public void setId(int id) {
         this.id = id;
     }
 
     /**
-     * @return
+     * Getter for book id.
+     *
+     * @return int book id.
      */
     public int getBookId() {
         return bookId;
     }
 
     /**
-     * @return
+     * Getter for member id.
+     *
+     * @return int member id.
      */
     public int getMemberId() {
         return memberId;
     }
 
     /**
-     * @return
+     * Calculates the due date based on the borrow date.
+     *
+     * @return Date the book is due.
      */
     public LocalDate getDueDate(){ return borrowDate.plus(30, ChronoUnit.DAYS); }
 
     /**
-     * @return
+     * Calculates the fine amount if a book is overdue.
+     *
+     * @return amount in pounds that the member owes.
      */
     public float getFine() {
         long daysOverdue = ChronoUnit.DAYS.between(getDueDate(), LocalDate.now());
@@ -99,7 +120,9 @@ public class BookLoan {
     }
 
     /**
-     * @return
+     * Calculates whether a book is overdue or not.
+     *
+     * @return boolean as to whether the book is overdue or not.
      */
     public boolean isOverdue(){
         LocalDate today = LocalDate.now();
