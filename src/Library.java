@@ -9,17 +9,17 @@ import java.util.*;
  */
 public class Library {
 
-    List<Book> books;
-    List<Member> members;
-    List<BookLoan> bookLoans;
+    private List<Book> books;
+    private List<Member> members;
+    private List<BookLoan> bookLoans;
 
-    String booksFileName;
-    String membersFileName;
-    String bookLoansFileName;
+    private String booksFileName;
+    private String membersFileName;
+    private String bookLoansFileName;
 
-    BookFactory bookFactory;
-    MemberFactory memberFactory;
-    BookLoanFactory bookLoanFactory;
+    private BookFactory bookFactory;
+    private MemberFactory memberFactory;
+    private BookLoanFactory bookLoanFactory;
 
     /**
      * Constructor for Library that sets up filepath variables, local storage variables for all books, members and
@@ -562,7 +562,13 @@ public class Library {
     public static boolean yesNoDecision(String message){
         System.out.println(message + "y/n");
         Scanner in = new Scanner(System.in);
-        char userInput = in.nextLine().charAt(0);
+        String userStringInput = in.nextLine();
+        char userInput;
+        if(!userStringInput.isEmpty()){
+            userInput = userStringInput.charAt(0);
+        }else{
+            return yesNoDecision(message);
+        }
         switch (userInput){
             case 'y':
             case 'Y':
@@ -589,7 +595,8 @@ public class Library {
                 book.getTitle(),
                 Arrays.toString(book.getAuthor()),
                 book.getYear(),
-                book.getNumberCopies()
+                book.getNumberCopies(),
+                book.getAvailable()
         );
     }
 
