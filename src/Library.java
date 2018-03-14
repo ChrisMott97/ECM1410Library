@@ -190,7 +190,7 @@ public class Library {
     public boolean searchMember(String fName, String lName){
         List<Member> members = memberFactory.getMembers(fName, lName);
 
-        if(members.get(0) != null){
+        if(members.isEmpty()){
             for (Member member : members) {
                 displayMember(member);
                 List<Book> bookResults = new ArrayList<>();
@@ -392,8 +392,8 @@ public class Library {
         System.out.println("Search Member");
 
         System.out.print(" |Full Name: ");
-        String fName = in.nextLine();
-        String lName = in.nextLine();
+        String fName = in.next();
+        String lName = in.next();
         System.out.println();
 
         if(!searchMember(fName, lName)){
