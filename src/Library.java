@@ -189,8 +189,7 @@ public class Library {
      */
     public boolean searchMember(String fName, String lName){
         List<Member> members = memberFactory.getMembers(fName, lName);
-
-        if(members.isEmpty()){
+        if(!members.isEmpty()){
             for (Member member : members) {
                 displayMember(member);
                 List<Book> bookResults = new ArrayList<>();
@@ -205,14 +204,15 @@ public class Library {
                     int bookCount = 0;
 
                     System.out.printf("%7s\n", "|");
-                    System.out.printf("%7s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
+                    System.out.printf("%7s %-9s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Book ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
                     for (Book book : bookResults) {
                         bookCount++;
                         BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
                         String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
-                        System.out.printf("%7s %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
+                        System.out.printf("%7s %-9d %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
                                 "|",
+                                loan.getId(),
                                 book.getId(),
                                 book.getTitle(),
                                 Arrays.toString(book.getAuthor()),
@@ -583,8 +583,8 @@ public class Library {
      * @param book the book object to format and output.
      */
     public void displayBook(Book book){
-        System.out.printf("%-7s %-30s %-35s %-5s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies");
-        System.out.printf("%-7d %-30s %-35s %-5d %-3d\n",
+        System.out.printf("%-7s %-30s %-35s %-5s %-17s %-3s\n","ID", "Title", "Author(s)", "Year", "Number of Copies", "Available");
+        System.out.printf("%-7d %-30s %-35s %-5d %-17d %-3d\n",
                 book.getId(),
                 book.getTitle(),
                 Arrays.toString(book.getAuthor()),

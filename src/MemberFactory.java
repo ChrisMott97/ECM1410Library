@@ -115,13 +115,13 @@ public class MemberFactory {
     public List<Member> getMembers(String fName, String lName){
         fName = fName.toLowerCase();
         lName = lName.toLowerCase();
-        List<Member> members = new ArrayList<>();
+        List<Member> results = new ArrayList<>();
         for (Member member: members) {
             if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
-                members.add(member);
+                results.add(member);
             }
         }
-        return members;
+        return results;
     }
 
     /**
