@@ -117,7 +117,7 @@ public class MemberFactory {
         lName = lName.toLowerCase();
         List<Member> results = new ArrayList<>();
         for (Member member: members) {
-            if (member.getFName().toLowerCase().contains(fName) && member.getLName().toLowerCase().contains(lName)) {
+            if (member.getFName().toLowerCase().equalsIgnoreCase(fName) && member.getLName().toLowerCase().equalsIgnoreCase(lName)) {
                 results.add(member);
             }
         }

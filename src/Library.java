@@ -70,7 +70,6 @@ public class Library {
      */
     public void showAllBookLoans(){
         displayBookLoans(bookLoans);
-        //TODO show full book and member info for each loan
         System.out.println();
     }
 
@@ -115,6 +114,7 @@ public class Library {
         }
         if(bookResults.size() == 1){
             if(memberResults.size() == 1){
+                //If search returned a single member and a single book.
                 BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
                 bookLoan.setDependencies(bookLoanFactory);
 
@@ -126,6 +126,7 @@ public class Library {
                     return true;
                 }
             }else{
+                //If search returned a single book but multiple members.
                 Member memberResult = memberFactory.multipleMembers(memberResults);
 
                 if(memberResult != null){
@@ -146,6 +147,7 @@ public class Library {
 
             if(bookResult != null){
                 if(memberResults.size() == 1){
+                    //If search returned a single member but multiple books
                     BookLoan bookLoan = new BookLoan(bookResults.get(0).getId(), memberResults.get(0).getId(), LocalDate.now());
                     bookLoan.setDependencies(bookLoanFactory);
 
@@ -157,6 +159,7 @@ public class Library {
                         return true;
                     }
                 }else{
+                    //If search returned multiple members and multiple books.
                     Member memberResult = memberFactory.multipleMembers(memberResults);
 
                     if(memberResult != null){
@@ -189,6 +192,7 @@ public class Library {
      */
     public boolean searchMember(String fName, String lName){
         List<Member> members = memberFactory.getMembers(fName, lName);
+
         if(!members.isEmpty()){
             for (Member member : members) {
                 displayMember(member);
@@ -204,12 +208,14 @@ public class Library {
                     int bookCount = 0;
 
                     System.out.printf("%7s\n", "|");
+                    //Print subheadings for the member's book loans.
                     System.out.printf("%7s %-9s %-9s %-30s %-35s %-5s %-17s %-17s %-10s\n", "|", "Loan ID", "Book ID", "Title", "Author", "Year", "Borrow Date", "Due Date", "Status");
                     for (Book book : bookResults) {
                         bookCount++;
                         BookLoan loan = bookLoanFactory.getBookLoan(book.getId(), member.getId());
                         String warning = loan.isOverdue() ? "OVERDUE" : "On Loan";
 
+                        //Print data for the member's book loans.
                         System.out.printf("%7s %-9d %-9d %-30s %-35s %-5d %-17s %-17s %-10s\n",
                                 "|",
                                 loan.getId(),
@@ -504,7 +510,7 @@ public class Library {
         System.out.println();
 
         LocalDate dateJoined = LocalDate.now();
-        System.out.printf(" |Date Joined: %s", dateJoined);
+        System.out.printf(" |Date Joined: %s \n\n", dateJoined);
 
         if(!addNewMember(fName, lName, dateJoined)){
             System.out.println("Could not add member.");
